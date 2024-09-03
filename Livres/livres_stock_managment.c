@@ -44,6 +44,7 @@ int main(){
         int choix;
 
         if (scanf("%d", &choix) == -1) continue;
+        while (getchar() != '\n');
         
 
         switch (choix)
