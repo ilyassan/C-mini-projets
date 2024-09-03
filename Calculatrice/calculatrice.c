@@ -11,9 +11,15 @@ int main(){
     int i = 1;
     while (1)
     {
+        
         printf("Entrer le %d numero: ", i);
+
         double input;
-        scanf("%lf", &input);
+        while (scanf("%lf", &input) == -1)
+        {
+            printf("Entrer le %d numero: ", i);
+        }
+        
         
         listeOperations();
         
