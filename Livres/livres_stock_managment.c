@@ -90,11 +90,11 @@ int main(){
 void afficherLesLivres(){
     if (livresNombre == 0)
     {
-        puts("No produits pour afficher.");
+        puts("Pas des livres pour afficher.");
         return;
     }
     
-    puts("Tous les produits en le stock:");
+    puts("Tous les livres en le stock:");
     for (int i = 0; i < livresNombre; i++)
     {
        printf("\t%d => Titre: %s / Auteur: %s / Quantite: %d / Prix: %d",
@@ -134,7 +134,7 @@ void ajouterUnLivre(){
 
     livresNombre++;
 
-    puts("Le livre est ajoute avec success.");
+    puts("Le livre est ajoute avec succes.");
 }
 
 void metreAjourLaQuantiteDeLivre(){
@@ -148,7 +148,7 @@ void metreAjourLaQuantiteDeLivre(){
 
     if (siExiste == -1)
     {
-        puts("No livre avec cette titre.");
+        puts("Pas de livre avec cette titre.");
         return;
     }
 
@@ -157,7 +157,7 @@ void metreAjourLaQuantiteDeLivre(){
 
     lesQuantites[siExiste] = quantite;
 
-    puts("La quantite est modifie avec success.");
+    puts("La quantite est modifie avec succes.");
 }
 
 void supprimerUnLivre(){
@@ -170,7 +170,7 @@ void supprimerUnLivre(){
 
     if (siExiste == -1)
     {
-        puts("No livre avec cette titre.");
+        puts("Pas de livre avec cette titre.");
         return;
     }
 
@@ -186,7 +186,7 @@ void supprimerUnLivre(){
 
     livresNombre--;
 
-    puts("Livre supprime avec success");
+    puts("Livre supprime avec succes");
 }
 
 
