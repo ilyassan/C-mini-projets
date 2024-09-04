@@ -1,8 +1,5 @@
 #include <stdio.h>
 
-void printerTableux(int t[], int len);
-
-
 int main(){
 
     int n;
