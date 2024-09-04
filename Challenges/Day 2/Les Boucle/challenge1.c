@@ -11,4 +11,6 @@ int main(){
     {
         printf("%d x %d = %d\n", nombre, i, nombre * i);
     }
+
+    return 0;
 }

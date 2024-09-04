@@ -25,4 +25,6 @@ int main(){
     }
 
     printf("\nLa maximum valeur est: %d\n", max);
+
+    return 0;
 }

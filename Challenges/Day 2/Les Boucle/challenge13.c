@@ -14,4 +14,6 @@ int main(){
     }
     
     printf("Et la somme des produits est: %d", somme);
+
+    return 0;
 }

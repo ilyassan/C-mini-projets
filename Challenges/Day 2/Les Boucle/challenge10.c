@@ -56,4 +56,5 @@ int main(){
         len++;
     }
 
+    return 0;
 }

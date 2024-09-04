@@ -25,6 +25,8 @@ int main(){
     
     puts("\nApres:");
     printTableux(t, len);
+
+    return 0;
 }
 
 void printTableux(int t[], int len){

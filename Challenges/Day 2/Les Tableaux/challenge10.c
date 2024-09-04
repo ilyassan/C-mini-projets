@@ -29,4 +29,5 @@ int main(){
 
     puts("\nL'element n'est pas trouve.");
 
+    return 0;
 }

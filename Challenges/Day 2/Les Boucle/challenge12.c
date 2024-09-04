@@ -37,6 +37,8 @@ int main(){
 
     puts("\nApres:");
     printerTableux(t, len);
+
+    return 0;
 }
 
 

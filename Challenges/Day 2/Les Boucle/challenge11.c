@@ -22,4 +22,5 @@ int main(){
 
     printf("Le moyenne est: %.2f", moyenne);
     
+    return 0;
 }

@@ -19,4 +19,6 @@ int main(){
     }
     
     printf("La somme est: %d", somme);
+
+    return 0;
 }

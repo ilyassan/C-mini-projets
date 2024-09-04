@@ -13,4 +13,6 @@ int main(){
     }
     
     printf("Le factorial de %d est: %d", n, factorial);
+
+    return 0;
 }

@@ -23,4 +23,6 @@ int main(){
     }
 
     printf("\nLa somme des elements est: %d\n", somme);
+
+    return 0;
 }

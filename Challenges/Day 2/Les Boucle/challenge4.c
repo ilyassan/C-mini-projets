@@ -14,4 +14,6 @@ int main(){
     }
 
     printf("La resultat est: %d", rev);
+
+    return 0;
 }

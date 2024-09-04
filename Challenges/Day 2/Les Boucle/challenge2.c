@@ -19,6 +19,8 @@ int main(){
         printf("\n");
         etoiles += 2;
     }
+
+    return 0;
 }
 
 

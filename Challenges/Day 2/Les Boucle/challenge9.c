@@ -18,4 +18,6 @@ int main(){
     }
 
     printf("%lld a la puissance de %d est: %lld", num, puiss, resultat);
+
+    return 0;
 }

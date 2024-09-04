@@ -12,6 +12,7 @@ int main(){
         somme += i;
     }
 
-
     printf("La somme de fibanoci est: %d", somme);
+
+    return 0;
 }

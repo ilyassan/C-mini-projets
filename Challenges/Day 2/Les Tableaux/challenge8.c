@@ -30,4 +30,6 @@ void printTableux(int t[], int len){
         }
         printf("%d => ", t[i]);
     }
+
+    return 0;
 }

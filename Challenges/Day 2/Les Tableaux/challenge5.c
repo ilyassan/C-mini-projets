@@ -25,4 +25,6 @@ int main(){
     }
 
     printf("\nLa minimum valeur est: %d\n", min);
+
+    return 0;
 }

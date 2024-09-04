@@ -23,4 +23,6 @@ int main(){
     }
 
     printf("\nLa moyenne des elements est: %.2f\n", somme / len);
+
+    return 0;
 }
