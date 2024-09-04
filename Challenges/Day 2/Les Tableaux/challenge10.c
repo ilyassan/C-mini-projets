@@ -22,7 +22,7 @@ int main(){
     {
         if (t[i] == target)
         {
-            puts("\n L'element Trouve.");
+            puts("\nL'element Trouve.");
             return 0;
         }
     }
