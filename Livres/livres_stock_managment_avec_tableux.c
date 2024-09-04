@@ -97,7 +97,12 @@ void afficherLesLivres(){
     puts("Tous les livres en le stock:");
     for (int i = 0; i < livresNombre; i++)
     {
-       printf("\t%d => Titre: %s / Auteur: %s / Quantite: %d / Prix: %d",
+        if (lesQuantites[i] <= 0)
+        {
+            continue;
+        }
+        
+       printf("\t%d => Titre: %s / Auteur: %s / Quantite: %d / Prix: %d\n",
        i + 1, titres[i], auteurs[i], lesQuantites[i], lesPrix[i]);
     }
 }

@@ -100,7 +100,7 @@ void afficherLesLivres(){
     puts("Tous les livres en le stock:");
     for (int i = 0; i < livresNombre; i++)
     {
-       printf("\t%d => Titre: %s / Auteur: %s / Quantite: %d / Prix: %.2f",
+       printf("\t%d => Titre: %s / Auteur: %s / Quantite: %d / Prix: %.2f\n",
        i + 1, livres[i].titre, livres[i].auteur, livres[i].quantite, livres[i].prix);
     }
 }
@@ -129,6 +129,13 @@ void ajouterUnLivre(){
 
     printf("Entrer la quantite de livre: ");
     scanf("%d", &quantite);
+
+    if (quantite <= 0)
+    {
+        puts("Erreur lors de l'ajout d'un livre");
+        return;
+    }
+    
 
     printf("Entrer le prix de livre: ");
     scanf("%d", &prix);
