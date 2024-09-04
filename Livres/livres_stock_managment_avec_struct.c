@@ -33,7 +33,7 @@ int main(){
     
     int run = 1;
     
-    while (1)
+    while (run)
     {
         puts("#### Management de stock des livres ####");
         puts("\n\t1. Afficher Tous les Livres Disponibles");
