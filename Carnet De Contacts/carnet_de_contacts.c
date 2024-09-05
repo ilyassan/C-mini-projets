@@ -3,16 +3,13 @@
 #include <string.h>
 #include <signal.h> 
 
-// Des idées
-// 1-Binrary search (Done)
-// 2-Sauvegarder les contacts dans une exterieur fichier
-// 3-Charger les contacts sauvegarder en le debut de program
-// 4-Validation des inputs
 
+// Définir les constants
 #define MAX_NOM 100
 #define MAX_TELEPHONE 10
 #define MAX_EMAIL 30
 
+// Définir la structure de Contact
 typedef struct
 {
     char nom[MAX_NOM];
@@ -20,11 +17,14 @@ typedef struct
     char email[MAX_EMAIL];
 } Contact;
 
+// Définir les global variables
 Contact *contacts = NULL;
 int contactsLen = 0;
 
 char fichier[] = "contacts.txt";
 
+
+// Définir les fonctions
 
 void ajouteUnContact();
 int insertionAvecOrderDeNom(char nom[], char telephone[], char email[], int len);
@@ -46,13 +46,16 @@ void chargerLesContacts();
 void nettoyageEtQuitter(int signal);
 void finProgram();
 
+
 int main(){
 
+    // Charger les contacts et call la fonction nettoyage si le programme interrompu.
     chargerLesContacts();
-    signal(SIGINT, nettoyageEtQuitter); // Executer si le program et stoper l'exucution avec
+    signal(SIGINT, nettoyageEtQuitter);
 
     int travail = 1;
 
+    // La menu principale
     while (travail)
     {
         puts("#### Carnet des contact ####");
@@ -93,7 +96,7 @@ int main(){
             break;
         }
 
-        // Retour au menu principal
+        // Pour retour au menu principal
         choix = 0;
         while (choix != 1 && travail != 0) {
             puts("\n###############");
@@ -103,7 +106,7 @@ int main(){
         }
     }
     
-    
+    // Les opérations de fin de programme
     finProgram();
 
     return 0;
@@ -348,6 +351,19 @@ int rechercheDichotomiqueParNom(char nom[], int len){
 }
 
 
+// --------- Les Fonctions De Fin De Programme ---------
+void nettoyageEtQuitter(int signal) {
+    // Effectuer les opérations de nettoyage
+    finProgram();
+
+    puts("\nProgramme interrompu. Contacts enregistrées.");
+    exit(0);
+}
+
+void finProgram(){
+    enregistrerLesContacts();
+    free(contacts);
+}
 
 // --------- Entregistrer Les Contacts ---------
 void enregistrerLesContacts(){
@@ -405,17 +421,4 @@ void chargerLesContacts() {
     
     fclose(file);
     puts("\nLes contacts charges avec succes.");
-}
-
-void nettoyageEtQuitter(int signal) {
-    // Effectuer les opérations de nettoyage
-    finProgram();
-
-    puts("\nProgramme interrompu. Contacts enregistrées.");
-    exit(0);
-}
-
-void finProgram(){
-    enregistrerLesContacts();
-    free(contacts);
 }
