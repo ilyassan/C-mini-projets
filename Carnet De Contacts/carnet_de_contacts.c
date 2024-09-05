@@ -2,15 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-// Etaps
-// 1-Ajouter un contact 
-// 2-Modifier un contact
-// 3-Supprimer un contact
-// 4-Afficher tous les contact
-// 5-Recherche un contact
 
 // Des idées
-// 1-Binrary search
+// 1-Binrary search (Done)
 // 2-Sauvegarder les contacts dans une exterieur fichier
 // 3-Charger les contacts sauvegarder en le debut de program
 // 4-Validation des inputs
@@ -29,6 +23,8 @@ typedef struct
 Contact *contacts = NULL;
 int contactsLen = 0;
 
+char fichier[] = "contacts.txt";
+
 
 void ajouteUnContact();
 int insertionAvecOrderDeNom(char nom[], char telephone[], char email[], int len);
@@ -44,10 +40,13 @@ void afficherUnContact();
 
 int rechercheDichotomiqueParNom(char nom[], int len);
 
-
+void enregistrerLesContacts();
+void chargerLesContacts();
 
 
 int main(){
+
+    chargerLesContacts();
 
     int travail = 1;
 
@@ -101,6 +100,8 @@ int main(){
         }
     }
     
+    enregistrerLesContacts();
+    free(contacts);
     return 0;
 }
 
@@ -340,4 +341,64 @@ int rechercheDichotomiqueParNom(char nom[], int len){
     }
 
     return -1; // Contact N'existe pas
+}
+
+
+
+// --------- Entregistrer Les Contacts ---------
+void enregistrerLesContacts(){
+    FILE *file = fopen(fichier, "w");
+    if (file == NULL) {
+        puts("Échec de l'enregistrement des ventes !!");
+        return;
+    }
+
+    fprintf(file, "%d\n", contactsLen);
+
+    for (int i = 0; i < contactsLen; i++) {
+        fprintf(file, "%s\n", contacts[i].nom);
+        fprintf(file, "%s\n", contacts[i].telephone);
+        fprintf(file, "%s\n", contacts[i].email);
+    }
+
+    fclose(file);
+}
+
+// --------- Charger Les Contacts ---------
+void chargerLesContacts() {
+    FILE *file = fopen(fichier, "r");
+    if (file == NULL) {
+        return;
+    }
+
+    fscanf(file, "%d", &contactsLen);
+    fgetc(file);
+
+    contacts = (Contact*)malloc(contactsLen * sizeof(Contact));
+    if (contacts == NULL) {
+        fclose(file);
+        return;
+    }
+    
+    
+    for (int i = 0; i < contactsLen; i++) {
+        char nom[MAX_NOM];
+        char telephone[MAX_TELEPHONE];
+        char email[MAX_EMAIL];
+
+        if (fgets(nom, sizeof(nom), file) == NULL) break;
+        if (fgets(telephone, sizeof(telephone), file) == NULL) break;
+        if (fgets(email, sizeof(email), file) == NULL) break;
+
+        nom[strcspn(nom, "\n")] = '\0';
+        telephone[strcspn(telephone, "\n")] = '\0';
+        email[strcspn(email, "\n")] = '\0';
+
+        strcpy(contacts[i].nom, nom);
+        strcpy(contacts[i].telephone, telephone);
+        strcpy(contacts[i].email, email);
+    }
+    
+    fclose(file);
+    puts("Les contacts charges avec succes.");
 }
