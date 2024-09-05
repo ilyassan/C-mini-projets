@@ -36,9 +36,4 @@ void printEtoilesLigne(int etoiles, int max){
     {
         printf("*");
     }
-    
-    for (int i = 0; i < demiPart ; i++)
-    {
-        printf(" ");
-    }
 }
