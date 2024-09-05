@@ -34,6 +34,8 @@ void ajouteUnContact();
 void insertionAvecOrderDeNom(char nom[], char telephone[], char email[]);
 int rechercheDichotomiqueParNom(char nom[]);
 void afficherTousLesContact();
+void modifierUnContact();
+
 
 
 int main(){
@@ -64,7 +66,7 @@ int main(){
             afficherTousLesContact();
             break;
         case 3:
-        
+            modifierUnContact();
             break;
         case 4:
         
@@ -109,11 +111,10 @@ void ajouteUnContact(){
 
     if (rechercheDichotomiqueParNom(nom) != -1)
     {
-        puts("\tLe contact est deja existe.");
+        puts("\tCette nom est deja existe.");
         return;
     }
     
-
     printf("\tEntrer le telephone de contact: ");
     scanf("%s", telephone);
     while (getchar() != '\n')break;
@@ -140,7 +141,6 @@ void ajouteUnContact(){
     puts("Le contact est ajoute avec succes.");
 }
 
-
 void insertionAvecOrderDeNom(char nom[], char telephone[], char email[]){
 
     int indice = 0;
@@ -164,7 +164,6 @@ void insertionAvecOrderDeNom(char nom[], char telephone[], char email[]){
         }
 
         indice = mid;
-        printf("indice: %d", mid);
     }
     
 
@@ -223,4 +222,52 @@ void afficherTousLesContact(){
         );
     }
     
+}
+
+
+void modifierUnContact(){
+    char nom[MAX_NOM];
+
+    puts("Modifier Un Contact: ");
+
+    printf("\tEntrer le nom de contact: ");
+    scanf("%s", nom);
+    while (getchar() != '\n')break;
+
+    int indice = rechercheDichotomiqueParNom(nom);
+    if (indice == -1)
+    {
+        puts("\tLe contact n'existe pas.");
+        return;
+    }
+    
+    char nouvelleNom[MAX_NOM];
+    char nouvelleTelephone[MAX_TELEPHONE];
+    char nouvelleEmail[MAX_EMAIL];
+
+    printf("\tEntrer le nouvelle nom de contact: ");
+    scanf("%s", nouvelleNom);
+    while (getchar() != '\n')break;
+
+    if (rechercheDichotomiqueParNom(nouvelleNom) != -1)
+    {
+        puts("\tCette nom est deja existe.");
+        return;
+    }
+    
+    printf("\tEntrer le nouvelle telephone de contact: ");
+    scanf("%s", nouvelleTelephone);
+    while (getchar() != '\n')break;
+
+    printf("\tEntrer le nouvelle email de contact: ");
+    scanf("%s", nouvelleEmail);
+    while (getchar() != '\n')break;
+
+    // Supprimer l'ancient contact et apres ajouter le nouveux (Pour l'order etre a-z)
+
+    strcpy(contacts[indice].nom, nouvelleNom);
+    strcpy(contacts[indice].telephone, nouvelleTelephone);
+    strcpy(contacts[indice].email, nouvelleEmail);
+
+    puts("Le contact est modifie avec succes");
 }
