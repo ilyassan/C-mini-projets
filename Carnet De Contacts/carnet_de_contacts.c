@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include <signal.h> 
 
 // Des idées
 // 1-Binrary search (Done)
@@ -43,10 +43,13 @@ int rechercheDichotomiqueParNom(char nom[], int len);
 void enregistrerLesContacts();
 void chargerLesContacts();
 
+void nettoyageEtQuitter(int signal);
+void finProgram();
 
 int main(){
 
     chargerLesContacts();
+    signal(SIGINT, nettoyageEtQuitter); // Executer si le program et stoper l'exucution avec
 
     int travail = 1;
 
@@ -100,8 +103,9 @@ int main(){
         }
     }
     
-    enregistrerLesContacts();
-    free(contacts);
+    
+    finProgram();
+
     return 0;
 }
 
@@ -349,7 +353,6 @@ int rechercheDichotomiqueParNom(char nom[], int len){
 void enregistrerLesContacts(){
     FILE *file = fopen(fichier, "w");
     if (file == NULL) {
-        puts("Échec de l'enregistrement des ventes !!");
         return;
     }
 
@@ -362,6 +365,7 @@ void enregistrerLesContacts(){
     }
 
     fclose(file);
+    puts("Les contacts enregistre avec succes.");
 }
 
 // --------- Charger Les Contacts ---------
@@ -400,5 +404,18 @@ void chargerLesContacts() {
     }
     
     fclose(file);
-    puts("Les contacts charges avec succes.");
+    puts("\nLes contacts charges avec succes.");
+}
+
+void nettoyageEtQuitter(int signal) {
+    // Effectuer les opérations de nettoyage
+    finProgram();
+
+    puts("\nProgramme interrompu. Contacts enregistrées.");
+    exit(0);
+}
+
+void finProgram(){
+    enregistrerLesContacts();
+    free(contacts);
 }
