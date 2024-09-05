@@ -31,7 +31,7 @@ int contactsLen = 0;
 
 
 void ajouteUnContact();
-void insertionAvecOrderDeNom(char nom[], char telephone[], char email[], int len);
+int insertionAvecOrderDeNom(char nom[], char telephone[], char email[], int len);
 int rechercheDichotomiqueParNom(char nom[], int len);
 void afficherTousLesContact();
 void modifierUnContact();
@@ -124,24 +124,24 @@ void ajouteUnContact(){
     scanf("%s", email);
     while (getchar() != '\n')break;
 
+    // insertion avec order
+    if (insertionAvecOrderDeNom(nom, telephone, email, contactsLen))
+    {
+        puts("Le contact est ajoute avec succes.");
+        return;
+    }
+    puts("Erreur lors de l'ajout d'un contact.");
+}
 
+int insertionAvecOrderDeNom(char nom[], char telephone[], char email[], int len) {
     Contact *temp = (Contact*) realloc(contacts, (contactsLen + 1) * sizeof(Contact));
     if (temp == NULL)
     {
-        puts("Erreur lors de l'ajout d'un contact.");
-        return;
+        return 0;
     }
     // Allocation Succéss
     contacts = temp;
 
-    // insertion avec order
-    insertionAvecOrderDeNom(nom, telephone, email, contactsLen);
-    contactsLen++;
-
-    puts("Le contact est ajoute avec succes.");
-}
-
-void insertionAvecOrderDeNom(char nom[], char telephone[], char email[], int len) {
     int indice = len;
 
     for (int i = 0; i < len; i++) {
@@ -158,6 +158,10 @@ void insertionAvecOrderDeNom(char nom[], char telephone[], char email[], int len
     strcpy(contacts[indice].nom, nom);
     strcpy(contacts[indice].telephone, telephone);
     strcpy(contacts[indice].email, email);
+
+    contactsLen++;
+
+    return 1;
 }
 
 void afficherTousLesContact(){
@@ -216,13 +220,19 @@ void modifierUnContact(){
     scanf("%s", nouvelleEmail);
     while (getchar() != '\n')break;
 
-    // Supprimer l'ancient contact et apres ajouter le nouveux (Pour l'order etre a-z)
+    if (strcmp(nom, nouvelleNom) != 0
+        &&
+        supprimerUnContactParIndice(indice)
+        && 
+        insertionAvecOrderDeNom(nouvelleNom, nouvelleTelephone, nouvelleEmail, contactsLen)
+        )
+    {
+        puts("Le contact est modifie avec succes.");
+        return;
+    }
 
-    strcpy(contacts[indice].nom, nouvelleNom);
-    strcpy(contacts[indice].telephone, nouvelleTelephone);
-    strcpy(contacts[indice].email, nouvelleEmail);
+    puts("Erreur lors de modifie le contact.");
 
-    puts("Le contact est modifie avec succes");
 }
 
 void supprimerUnContact(){
@@ -243,7 +253,9 @@ void supprimerUnContact(){
     if (supprimerUnContactParIndice(indice))
     {
         puts("Contact supprime avec succes");
+        return;
     }
+    puts("Probleme lors de supprimer le contact.");
 }
 int supprimerUnContactParIndice(int indice){
     for (int i = indice; i < contactsLen - 1; i++)
@@ -263,7 +275,6 @@ int supprimerUnContactParIndice(int indice){
 
     if (temp == NULL)
     {
-        puts("Probleme lors de supprimer le contact.");
         return 0;
     }
     // Allocation Succéss
