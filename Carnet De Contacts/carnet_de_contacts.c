@@ -31,6 +31,8 @@ int contactsLen = 0;
 
 
 void ajouteUnContact();
+void insertionAvecOrderDeNom(char nom[], char telephone[], char email[]);
+int rechercheDichotomiqueParNom(char nom[]);
 void afficherTousLesContact();
 
 
@@ -101,17 +103,22 @@ void ajouteUnContact(){
 
     puts("Ajouter Un Contact: ");
     
-    printf("\t Entrer le nom de contact: ");
+    printf("\tEntrer le nom de contact: ");
     scanf("%s", nom);
     while (getchar() != '\n')break;
 
-    // Chercher si existe (par nom)
+    if (rechercheDichotomiqueParNom(nom) != -1)
+    {
+        puts("\tLe contact est deja existe.");
+        return;
+    }
+    
 
-    printf("\t Entrer le telephone de contact: ");
+    printf("\tEntrer le telephone de contact: ");
     scanf("%s", telephone);
     while (getchar() != '\n')break;
 
-    printf("\t Entrer l'email de contact: ");
+    printf("\tEntrer l'email de contact: ");
     scanf("%s", email);
     while (getchar() != '\n')break;
 
@@ -119,21 +126,85 @@ void ajouteUnContact(){
     Contact *temp = (Contact*) realloc(contacts, (contactsLen + 1) * sizeof(Contact));
     if (temp == NULL)
     {
-        puts("Erreur lors de l'ajout d'un contact");
+        puts("\tErreur lors de l'ajout d'un contact");
         return;
     }
     
     contacts = temp;
 
-    strcpy(contacts[contactsLen].nom, nom);
-    strcpy(contacts[contactsLen].telephone, telephone);
-    strcpy(contacts[contactsLen].email, email);
+    // insertion avec order
+    insertionAvecOrderDeNom(nom, telephone, email);
 
     contactsLen++;
 
     puts("Le contact est ajoute avec succes.");
 }
 
+
+void insertionAvecOrderDeNom(char nom[], char telephone[], char email[]){
+
+    int indice = 0;
+
+    int gauche = 0;
+    int droit = contactsLen;
+    
+    while (gauche < droit)
+    {
+        int mid = (droit + gauche)/ 2;
+
+        int comparaison = strcmp(nom, contacts[mid].nom);
+
+        if (comparaison > 0)
+        {
+            gauche = mid + 1;
+        }
+        else if (comparaison < 0)
+        {
+            droit = mid - 1;
+        }
+
+        indice = mid;
+        printf("indice: %d", mid);
+    }
+    
+
+    for (int i = contactsLen; i != indice; i--)
+    {
+        Contact temp = contacts[i];
+        contacts[i] = contacts[i - 1];
+        contacts[i - 1] = temp;
+    }
+
+    strcpy(contacts[indice].nom, nom);
+    strcpy(contacts[indice].telephone, telephone);
+    strcpy(contacts[indice].email, email);
+}
+
+int rechercheDichotomiqueParNom(char nom[]){
+    int gauche = 0;
+    int droit = contactsLen - 1;
+    
+    while (gauche <= droit)
+    {
+        int mid = (droit + gauche)/ 2;
+
+        int comparaison = strcmp(nom, contacts[mid].nom);
+
+        if (comparaison > 0)
+        {
+            gauche = mid + 1;
+        }
+        else if (comparaison < 0)
+        {
+            droit = mid - 1;
+        }
+        else{
+            return mid; // Contact trouve, retourner l'indice
+        }
+    }
+
+    return -1; // Contact N'existe pas
+}
 
 
 void afficherTousLesContact(){
