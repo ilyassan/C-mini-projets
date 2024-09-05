@@ -31,6 +31,7 @@ int contactsLen = 0;
 
 
 void ajouteUnContact();
+void afficherTousLesContact();
 
 
 int main(){
@@ -50,6 +51,7 @@ int main(){
         printf("Entrer votre choix: ");
         int choix;
         scanf("%d", &choix);
+        while (getchar() != '\n')break;
 
         switch (choix)
         {
@@ -57,7 +59,7 @@ int main(){
             ajouteUnContact();
             break;
         case 2:
-        
+            afficherTousLesContact();
             break;
         case 3:
         
@@ -101,14 +103,17 @@ void ajouteUnContact(){
     
     printf("\t Entrer le nom de contact: ");
     scanf("%s", nom);
+    while (getchar() != '\n')break;
 
     // Chercher si existe (par nom)
 
     printf("\t Entrer le telephone de contact: ");
     scanf("%s", telephone);
+    while (getchar() != '\n')break;
 
     printf("\t Entrer l'email de contact: ");
     scanf("%s", email);
+    while (getchar() != '\n')break;
 
 
     Contact *temp = (Contact*) realloc(contacts, (contactsLen + 1) * sizeof(Contact));
@@ -127,4 +132,24 @@ void ajouteUnContact(){
     contactsLen++;
 
     puts("Le contact est ajoute avec succes.");
+}
+
+
+
+void afficherTousLesContact(){
+    puts("Tous Les Contacts: ");
+
+    if (contactsLen == 0)
+    {
+        puts("\tN'existe pas des contact pour afficher");
+        return;
+    }
+    
+    for (int i = 0; i < contactsLen; i++)
+    {
+        printf("\t%d => Le Nom: %s / Le Telephone: %s / L'email: %s\n",
+            i + 1, contacts[i].nom, contacts[i].telephone, contacts[i].email
+        );
+    }
+    
 }
