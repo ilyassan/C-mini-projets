@@ -31,8 +31,8 @@ int contactsLen = 0;
 
 
 void ajouteUnContact();
-void insertionAvecOrderDeNom(char nom[], char telephone[], char email[]);
-int rechercheDichotomiqueParNom(char nom[]);
+void insertionAvecOrderDeNom(char nom[], char telephone[], char email[], int len);
+int rechercheDichotomiqueParNom(char nom[], int len);
 void afficherTousLesContact();
 void modifierUnContact();
 void supprimerUnContact();
@@ -110,7 +110,7 @@ void ajouteUnContact(){
     scanf("%s", nom);
     while (getchar() != '\n')break;
 
-    if (rechercheDichotomiqueParNom(nom) != -1)
+    if (rechercheDichotomiqueParNom(nom, contactsLen) != -1)
     {
         puts("Cette nom est deja existe.");
         return;
@@ -135,43 +135,24 @@ void ajouteUnContact(){
     contacts = temp;
 
     // insertion avec order
-    insertionAvecOrderDeNom(nom, telephone, email);
-
+    insertionAvecOrderDeNom(nom, telephone, email, contactsLen);
     contactsLen++;
 
     puts("Le contact est ajoute avec succes.");
 }
-void insertionAvecOrderDeNom(char nom[], char telephone[], char email[]){
 
-    int indice = 0;
+void insertionAvecOrderDeNom(char nom[], char telephone[], char email[], int len) {
+    int indice = len;
 
-    int gauche = 0;
-    int droit = contactsLen;
-    
-    while (gauche < droit)
-    {
-        int mid = (droit + gauche)/ 2;
-
-        int comparaison = strcmp(nom, contacts[mid].nom);
-
-        if (comparaison > 0)
-        {
-            gauche = mid + 1;
+    for (int i = 0; i < len; i++) {
+        if (strcmp(nom, contacts[i].nom) < 0) {
+            indice = i;
+            break;
         }
-        else if (comparaison < 0)
-        {
-            droit = mid - 1;
-        }
-
-        indice = mid;
     }
-    
 
-    for (int i = contactsLen; i != indice; i--)
-    {
-        Contact temp = contacts[i];
+    for (int i = len; i > indice; i--) {
         contacts[i] = contacts[i - 1];
-        contacts[i - 1] = temp;
     }
 
     strcpy(contacts[indice].nom, nom);
@@ -206,7 +187,7 @@ void modifierUnContact(){
     scanf("%s", nom);
     while (getchar() != '\n')break;
 
-    int indice = rechercheDichotomiqueParNom(nom);
+    int indice = rechercheDichotomiqueParNom(nom, contactsLen);
     if (indice == -1)
     {
         puts("\tLe contact n'existe pas.");
@@ -221,7 +202,7 @@ void modifierUnContact(){
     scanf("%s", nouvelleNom);
     while (getchar() != '\n')break;
 
-    if (rechercheDichotomiqueParNom(nouvelleNom) != -1)
+    if (rechercheDichotomiqueParNom(nouvelleNom, contactsLen) != -1)
     {
         puts("\tCette nom est deja existe.");
         return;
@@ -251,7 +232,7 @@ void supprimerUnContact(){
     printf("\tEntrer le nom de contact: ");
     scanf("%s", nom);
 
-    int indice = rechercheDichotomiqueParNom(nom);
+    int indice = rechercheDichotomiqueParNom(nom, contactsLen);
     if (indice == -1)
     {
         puts("Le contact n'existe pas.");
@@ -292,9 +273,11 @@ int supprimerUnContactParIndice(int indice){
 }
 
 
-int rechercheDichotomiqueParNom(char nom[]){
+int rechercheDichotomiqueParNom(char nom[], int len){
+    if (len == 0) return -1;
+    
     int gauche = 0;
-    int droit = contactsLen - 1;
+    int droit = len - 1;
     
     while (gauche <= droit)
     {
