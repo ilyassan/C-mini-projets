@@ -6,7 +6,9 @@ int main(){
     char phrase[30];
 
     printf("Entrer la phrase pour inverser: ");
-    scanf("%s", phrase);
+    fgets(phrase, sizeof(phrase), stdin);
+    phrase[strcspn(phrase, "\n")] = '\0';
+    
     int len = strlen(phrase);
 
     

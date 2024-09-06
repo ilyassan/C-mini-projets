@@ -7,9 +7,12 @@ int main(){
     char phrase2[30];
 
     printf("Entrer la premier phrase: ");
-    scanf("%s", phrase1);
+    fgets(phrase1, sizeof(phrase1), stdin);
+    phrase1[strcspn(phrase1, "\n")] = '\0';
+    
     printf("Entrer la deuxieme phrase: ");
-    scanf("%s", phrase2);
+    fgets(phrase2, sizeof(phrase2), stdin);
+    phrase2[strcspn(phrase2, "\n")] = '\0';
     
     if (strcmp(phrase1, phrase2) == 0)
     {

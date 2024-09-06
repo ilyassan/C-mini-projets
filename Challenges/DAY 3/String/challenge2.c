@@ -1,11 +1,13 @@
 #include <stdio.h>
+#include <string.h>
 
 int main(){
 
     char phrase[30];
 
     printf("Entrer la phrase: ");
-    scanf("%s", phrase);
+    fgets(phrase, sizeof(phrase), stdin);
+    phrase[strcspn(phrase, "\n")] = '\0';
 
     int charachters = 0;
 
