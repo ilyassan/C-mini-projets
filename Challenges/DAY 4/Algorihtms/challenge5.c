@@ -14,7 +14,7 @@ int main(){
     puts("Avant");
     printTableux(t, len);
     
-    // Tri Rapide
+    // Tri Fusion
     triFusion(t, len);
 
     puts("\nApres");

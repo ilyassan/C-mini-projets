@@ -13,7 +13,7 @@ int main(){
     puts("Avant");
     printTableux(t, len);
     
-    // Tri Rapide
+    // Tri Par Comptage
     triParComptage(t, len, output);
 
     puts("\nApres");
