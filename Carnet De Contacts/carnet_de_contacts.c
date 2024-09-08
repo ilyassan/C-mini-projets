@@ -29,7 +29,9 @@ char fichier[] = "contacts.txt";
 void ajouteUnContact();
 int insertionAvecOrderDeNom(char nom[], char telephone[], char email[], int len);
 
-void afficherTousLesContact();
+void afficherTousLesContact(Contact triContacts[], int croissante);
+void afficherSousMenu();
+void triEtAfficherLesContactParEmail(int croissante);
 
 void modifierUnContact();
 
@@ -78,8 +80,8 @@ int main(){
             ajouteUnContact();
             break;
         case 2:
-            afficherTousLesContact();
-            break;
+            afficherSousMenu();
+            continue;
         case 3:
             modifierUnContact();
             break;
@@ -180,7 +182,53 @@ int insertionAvecOrderDeNom(char nom[], char telephone[], char email[], int len)
     return 1;
 }
 
-void afficherTousLesContact(){
+void afficherSousMenu() {
+    int choix;
+
+    while (1) {
+        
+        puts("\n\t1. Selon l'ordre alphabetique (croissante)");
+        puts("\t2. Selon l'ordre alphabetique (décroissante)");
+        puts("\t3. Selon l'ordre d'email (croissante)");
+        puts("\t4. Selon l'ordre d'email (décroissante)");
+        puts("\t5. Retour au menu principal");
+        
+        printf("\nEntrer votre choix: ");
+        scanf("%d", &choix);
+        while (getchar() != '\n');
+
+        switch (choix) {
+            case 1:
+                afficherTousLesContact(contacts, 1); // croissante
+                break;
+            case 2:
+                afficherTousLesContact(contacts, 0); // décroissante
+                break;
+            case 3:
+                triEtAfficherLesContactParEmail(1); // croissante
+                break;
+            case 4:
+                triEtAfficherLesContactParEmail(0); // décroissante
+                break;
+            case 5:
+                return; // Retourne au menu principal
+            default:
+                puts("Choix invalid.");
+        }
+
+        // Retour au menu principal
+        choix = 0;
+        while (choix != 1) {
+            puts("\n###############");
+            puts("1. Retour");
+            printf("Entrez votre choix: ");
+            scanf("%d", &choix);
+            while (getchar() != '\n');
+        }
+    }
+}
+
+void afficherTousLesContact(Contact triContacts[], int croissante){
     puts("Tous Les Contacts: \n");
 
     // Afficher les colonnes
@@ -196,14 +244,49 @@ void afficherTousLesContact(){
     }
 
     // Afficher les lignes
-    for (int i = 0; i < contactsLen; i++)
+    if (croissante)
     {
-        printf("\t| %-30s | %-10s | %-30s |\n",
-            contacts[i].nom, contacts[i].telephone, contacts[i].email
-        );
+        for (int i = 0; i < contactsLen; i++)
+        {
+            printf("\t| %-30s | %-10s | %-30s |\n",
+                triContacts[i].nom, triContacts[i].telephone, triContacts[i].email
+            );
+        }
     }
+    else
+    {
+        for (int i = contactsLen - 1; i >= 0; i--)
+        {
+            printf("\t| %-30s | %-10s | %-30s |\n",
+                triContacts[i].nom, triContacts[i].telephone, triContacts[i].email
+            );
+        }
+    }
+    
+    
 
     printf("\t+--------------------------------+------------+--------------------------------+\n");
+}
+
+void triEtAfficherLesContactParEmail(int croissante){
+    Contact *cpy = (Contact*) malloc(contactsLen * sizeof(Contact));
+    memcpy(cpy, contacts, contactsLen * sizeof(Contact));
+
+    for (int i = 0; i < contactsLen; i++)
+    {
+        for (int j = 0; j < contactsLen - 1; j++)
+        {
+            if (strcmp(cpy[j].email, cpy[j + 1].email) > 0)
+            {
+                Contact temp = cpy[j];
+                cpy[j] = cpy[j + 1];
+                cpy[j + 1] = temp;
+            }
+            
+        } 
+    }
+    
+    afficherTousLesContact(cpy, croissante);
 }
 
 void modifierUnContact(){
