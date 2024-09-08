@@ -40,13 +40,13 @@ int supprimerUnContactParIndice(int indice);
 
 void afficherUnContact();
 
-int rechercheDichotomiqueParNom(char nom[], int len);
+int rechercheBinaireParNom(char nom[], int len);
 
 void enregistrerLesContacts();
 void chargerLesContacts();
 
 void scanString(char string[], int size);
-void nettoyageEtQuitter(int signal);
+void nettoyageEtQuitter();
 void finProgram();
 
 
@@ -110,7 +110,7 @@ int main(){
             while (getchar() != '\n');
         }
     }
-    
+
     // Les opérations de fin de programme
     finProgram();
 
@@ -129,7 +129,7 @@ void ajouteUnContact(){
     printf("\tEntrer le nom de contact: ");
     scanString(nom, sizeof(nom));
 
-    if (rechercheDichotomiqueParNom(nom, contactsLen) != -1)
+    if (rechercheBinaireParNom(nom, contactsLen) != -1)
     {
         puts("\nCette nom est deja existe.");
         return;
@@ -261,6 +261,7 @@ void triEtAfficherLesContactParEmail(int croissante){
     Contact *cpy = (Contact*) malloc(contactsLen * sizeof(Contact));
     memcpy(cpy, contacts, contactsLen * sizeof(Contact));
 
+    // Tri á bulles
     for (int i = 0; i < contactsLen; i++)
     {
         for (int j = 0; j < contactsLen - 1; j++)
@@ -271,11 +272,11 @@ void triEtAfficherLesContactParEmail(int croissante){
                 cpy[j] = cpy[j + 1];
                 cpy[j + 1] = temp;
             }
-            
         } 
     }
-    
+
     afficherTousLesContact(cpy, croissante);
+    free(cpy);
 }
 
 // --------- Les Fonctions De Modification Des Contacts ---------
@@ -287,7 +288,7 @@ void modifierUnContact(){
     printf("\tEntrer le nom de contact: ");
     scanString(nom, sizeof(nom));
 
-    int indice = rechercheDichotomiqueParNom(nom, contactsLen);
+    int indice = rechercheBinaireParNom(nom, contactsLen);
     if (indice == -1)
     {
         puts("Le contact n'existe pas.");
@@ -301,7 +302,7 @@ void modifierUnContact(){
     printf("\tEntrer le nouvelle nom de contact: ");
     scanString(nouvelleNom, sizeof(nouvelleNom));
 
-    if (rechercheDichotomiqueParNom(nouvelleNom, contactsLen) != -1)
+    if (rechercheBinaireParNom(nouvelleNom, contactsLen) != -1)
     {
         puts("\tCette nom est deja existe.");
         return;
@@ -350,7 +351,7 @@ void supprimerUnContact(){
 
     printf("\n");
 
-    int indice = rechercheDichotomiqueParNom(nom, contactsLen);
+    int indice = rechercheBinaireParNom(nom, contactsLen);
     if (indice == -1)
     {
         puts("Le contact n'existe pas.");
@@ -402,7 +403,7 @@ void afficherUnContact(){
 
     printf("\n");
 
-    int indice = rechercheDichotomiqueParNom(nom, contactsLen);
+    int indice = rechercheBinaireParNom(nom, contactsLen);
     if (indice == -1)
     {
         puts("Le contact n'existe pas.");
@@ -417,7 +418,7 @@ void afficherUnContact(){
 }
 
 // --------- Des Fonctions Auxiliares ---------
-int rechercheDichotomiqueParNom(char nom[], int len){
+int rechercheBinaireParNom(char nom[], int len){
     if (len == 0) return -1;
     
     int gauche = 0;
@@ -452,11 +453,11 @@ void scanString(char string[], int size){
 }
 
 // --------- Les Fonctions De Fin De Programme ---------
-void nettoyageEtQuitter(int signal) {
+void nettoyageEtQuitter() {
     // Effectuer les opérations de nettoyage
     finProgram();
 
-    puts("\nProgramme interrompu. Contacts enregistrées.");
+    puts("\nProgramme interrompu.");
     exit(0);
 }
 
@@ -471,6 +472,7 @@ void enregistrerLesContacts(){
     if (file == NULL) {
         return;
     }
+
 
     fprintf(file, "%d\n", contactsLen);
 
