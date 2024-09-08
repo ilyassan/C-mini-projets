@@ -5,9 +5,9 @@
 
 
 // Définir les constants
-#define MAX_NOM 31
-#define MAX_TELEPHONE 31
-#define MAX_EMAIL 31
+#define MAX_NOM 32
+#define MAX_TELEPHONE 12
+#define MAX_EMAIL 32
 
 // Définir la structure de Contact
 typedef struct
@@ -70,7 +70,7 @@ int main(){
         printf("\nEntrer votre choix: ");
         int choix;
         scanf("%d", &choix);
-        while (getchar() != '\n')break;
+        while (getchar() != '\n');
 
         switch (choix)
         {
@@ -104,6 +104,7 @@ int main(){
             puts("1. Retour");
             printf("Entrez votre choix: ");
             scanf("%d", &choix);
+            while (getchar() != '\n');
         }
     }
     
@@ -371,8 +372,9 @@ int rechercheDichotomiqueParNom(char nom[], int len){
 
 
 void scanString(char string[], int size){
-    fgets(string, size, stdin);
-    string[strcspn(string, "\n")] = '\0';
+    if (fgets(string, size, stdin) != NULL) {
+        string[strcspn(string, "\n")] = '\0';
+    }
 }
 
 // --------- Les Fonctions De Fin De Programme ---------
