@@ -5,9 +5,9 @@
 
 
 // Définir les constants
-#define MAX_NOM 100
-#define MAX_TELEPHONE 10
-#define MAX_EMAIL 30
+#define MAX_NOM 31
+#define MAX_TELEPHONE 31
+#define MAX_EMAIL 31
 
 // Définir la structure de Contact
 typedef struct
@@ -114,7 +114,6 @@ int main(){
 }
 
 
-
 void ajouteUnContact(){
     char nom[MAX_NOM];
     char telephone[MAX_TELEPHONE];
@@ -145,6 +144,7 @@ void ajouteUnContact(){
         puts("Le contact est ajoute avec succes.");
         return;
     }
+
     puts("Erreur lors de l'ajout d'un contact.");
 }
 
@@ -182,19 +182,27 @@ int insertionAvecOrderDeNom(char nom[], char telephone[], char email[], int len)
 void afficherTousLesContact(){
     puts("Tous Les Contacts: \n");
 
+    // Afficher les colonnes
+    printf("\t+--------------------------------+------------+--------------------------------+\n");
+    printf("\t| %-30s | %-10s | %-30s |\n", "Nom", "Telephone", "Email");
+    printf("\t+--------------------------------+------------+--------------------------------+\n");
+
     if (contactsLen == 0)
     {
-        puts("\tN'existe pas des contact pour afficher");
-        return;
+        printf("\t|                   ");
+        printf("%-40s", "N'existe pas des contacts pour afficher.");
+        printf("                   |\n");
     }
-    
+
+    // Afficher les lignes
     for (int i = 0; i < contactsLen; i++)
     {
-        printf("\t%d => Le Nom: %s / Le Telephone: %s / L'email: %s\n",
-            i + 1, contacts[i].nom, contacts[i].telephone, contacts[i].email
+        printf("\t| %-30s | %-10s | %-30s |\n",
+            contacts[i].nom, contacts[i].telephone, contacts[i].email
         );
     }
-    
+
+    printf("\t+--------------------------------+------------+--------------------------------+\n");
 }
 
 void modifierUnContact(){
@@ -255,9 +263,7 @@ void modifierUnContact(){
         return;
     }
 
-
     puts("Erreur lors de modifie le contact.");
-
 }
 
 void supprimerUnContact(){
