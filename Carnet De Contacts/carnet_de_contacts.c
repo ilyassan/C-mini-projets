@@ -50,6 +50,7 @@ void nettoyageEtQuitter(int signal);
 void finProgram();
 
 
+// --------- Le Main Fonction ---------
 int main(){
 
     // Charger les contacts et call la fonction nettoyage si le programme interrompu.
@@ -117,6 +118,7 @@ int main(){
 }
 
 
+// --------- Les Fonctions D'Ajout Des Contacts ---------
 void ajouteUnContact(){
     char nom[MAX_NOM];
     char telephone[MAX_TELEPHONE];
@@ -182,6 +184,7 @@ int insertionAvecOrderDeNom(char nom[], char telephone[], char email[], int len)
     return 1;
 }
 
+// --------- Les Fonctions D'affichage Des Contacts ---------
 void afficherSousMenu() {
     int choix;
 
@@ -275,6 +278,7 @@ void triEtAfficherLesContactParEmail(int croissante){
     afficherTousLesContact(cpy, croissante);
 }
 
+// --------- Les Fonctions De Modification Des Contacts ---------
 void modifierUnContact(){
     char nom[MAX_NOM];
 
@@ -336,6 +340,7 @@ void modifierUnContact(){
     puts("Erreur lors de modifie le contact.");
 }
 
+// --------- Les Fonctions De Suppression Des Contacts ---------
 void supprimerUnContact(){
     char nom[MAX_NOM];
     puts("Supprimer Un Contact: \n");
@@ -386,6 +391,7 @@ int supprimerUnContactParIndice(int indice){
     return 1;
 }
 
+// --------- Les Fonctions D'Affichage D'Un Contact ---------
 void afficherUnContact(){
     char nom[MAX_NOM];
 
@@ -410,7 +416,7 @@ void afficherUnContact(){
     printf("\tL'email: %s\n", contact.email);
 }
 
-
+// --------- Des Fonctions Auxiliares ---------
 int rechercheDichotomiqueParNom(char nom[], int len){
     if (len == 0) return -1;
     
@@ -438,7 +444,6 @@ int rechercheDichotomiqueParNom(char nom[], int len){
 
     return -1; // Contact N'existe pas
 }
-
 
 void scanString(char string[], int size){
     if (fgets(string, size, stdin) != NULL) {
