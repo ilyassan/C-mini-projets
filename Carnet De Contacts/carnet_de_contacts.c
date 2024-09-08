@@ -232,9 +232,9 @@ void afficherTousLesContact(Contact triContacts[], int croissante){
     puts("Tous Les Contacts: \n");
 
     // Afficher les colonnes
-    printf("\t+--------------------------------+------------+--------------------------------+\n");
-    printf("\t| %-30s | %-10s | %-30s |\n", "Nom", "Telephone", "Email");
-    printf("\t+--------------------------------+------------+--------------------------------+\n");
+    printf("\t+-----+--------------------------------+------------+--------------------------------+\n");
+    printf("\t| %-3s | %-30s | %-10s | %-30s |\n", "#", "Nom", "Telephone", "Email");
+    printf("\t+-----+--------------------------------+------------+--------------------------------+\n");
 
     if (contactsLen == 0)
     {
@@ -244,28 +244,14 @@ void afficherTousLesContact(Contact triContacts[], int croissante){
     }
 
     // Afficher les lignes
-    if (croissante)
+    for (int i = 0; i < contactsLen; i++)
     {
-        for (int i = 0; i < contactsLen; i++)
-        {
-            printf("\t| %-30s | %-10s | %-30s |\n",
-                triContacts[i].nom, triContacts[i].telephone, triContacts[i].email
-            );
-        }
+        int indice = croissante ? i : contactsLen - 1 - i;
+        printf("\t| %-3d | %-30s | %-10s | %-30s |\n",
+            i + 1, triContacts[indice].nom, triContacts[indice].telephone, triContacts[indice].email
+        );
+        printf("\t+-----+--------------------------------+------------+--------------------------------+\n");
     }
-    else
-    {
-        for (int i = contactsLen - 1; i >= 0; i--)
-        {
-            printf("\t| %-30s | %-10s | %-30s |\n",
-                triContacts[i].nom, triContacts[i].telephone, triContacts[i].email
-            );
-        }
-    }
-    
-    
-
-    printf("\t+--------------------------------+------------+--------------------------------+\n");
 }
 
 void triEtAfficherLesContactParEmail(int croissante){
