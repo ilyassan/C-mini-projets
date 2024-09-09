@@ -18,9 +18,15 @@ Livre *livres = NULL;
 int livresNombre = 0;
 
 
-int afficherLesLivres(Livre livresTrier[]); // Afficher tous les livres
+void afficherLesLivres(Livre livresTrier[]); // Afficher tous les livres
 void afficherSousMenu();
 int afficherLesOptionOrder();
+void afficherLesLivresTrierParTitre();
+void afficherLesLivresTrierParAuteur();
+void afficherLesLivresTrierParQuantite();
+void afficherLesLivresTrierParPrix();
+
+
 void ajouterUnLivre(); // Ajouter un livre en  stock
 void metreAjourLaQuantiteDeLivre();
 void supprimerUnLivre();
@@ -29,6 +35,7 @@ void ajouteLaQuantite(int i, int quantite);
 
 
 // Auxiliares
+void scanString(char string[], int size);
 int estExiste(char titre[]); // Chercher le livre par titre
 
 int main(){
@@ -57,7 +64,7 @@ int main(){
         {
         case 1:
             afficherSousMenu();
-            break;
+            continue;
         case 2:
             ajouterUnLivre();
             break;
@@ -92,22 +99,17 @@ int main(){
 }
 
 
-int afficherLesLivres(Livre livresTrier[]){
+void afficherLesLivres(Livre livresTrier[]){
     printf("\n");
     if (livresNombre == 0)
     {
         puts("N'existe pas des livres pour afficher.");
-        return -1;
+        return;
     }
 
     int croissante = afficherLesOptionOrder();
-    if (croissante == -1) // Option invalid
-    {
-        return -1;
-    }
     
-    
-    puts("Tous les livres en le stock:");
+    puts("Tous les livres en le stock:\n");
     for (int i = 0; i < livresNombre; i++)
     {
         int indice = croissante ? i : livresNombre - 1 - i;
@@ -115,7 +117,7 @@ int afficherLesLivres(Livre livresTrier[]){
        i + 1, livresTrier[indice].titre, livresTrier[indice].auteur, livresTrier[indice].quantite, livresTrier[indice].prix);
     }
 
-    return 1;
+    return;
 }
 
 void afficherSousMenu() {
@@ -136,19 +138,19 @@ void afficherSousMenu() {
 
         switch (choix) {
             case 1:
-                if (afficherLesLivres(livres) == -1) continue;
+                afficherLesLivres(livres);
                 break;
             case 2:
-                // afficherLesLivresTrierParTitre();
+                afficherLesLivresTrierParTitre();
                 break;
             case 3:
-                // afficherLesLivresTrierParAuteur();
+                afficherLesLivresTrierParAuteur();
                 break;
             case 4:
-                // afficherLesLivresTrierParQuantite();
+                afficherLesLivresTrierParQuantite();
                 break;
             case 5:
-                // afficherLesLivresTrierParPrix();
+                afficherLesLivresTrierParPrix();
                 break;
             case 6:
                 return; // Retourne au menu principal
@@ -175,7 +177,6 @@ int afficherLesOptionOrder(){
         
         puts("\t1. Selon l'ordre croissante");
         puts("\t2. Selon l'ordre decroissante");
-        puts("\t3. Retour au menu principal");
         
         printf("\nEntrer votre choix: ");
         scanf("%d", &choix);
@@ -185,9 +186,7 @@ int afficherLesOptionOrder(){
             case 1:
                 return 1; // croissante
             case 2:
-                return 2;// décroissante
-            case 3:
-                return -1; // Retourne au menu principal
+                return 0;// décroissante
             default:
                 puts("Choix invalid.");
         }
@@ -204,29 +203,117 @@ int afficherLesOptionOrder(){
     }
 }
 
+void afficherLesLivresTrierParTitre(){
+    Livre *cpy = (Livre*) malloc(livresNombre * sizeof(Livre));
+    memcpy(cpy, livres, livresNombre * sizeof(Livre));
+
+    // Tri á bulles
+    for (int i = 0; i < livresNombre; i++)
+    {
+        for (int j = 0; j < livresNombre - 1; j++)
+        {
+            if (strcmp(cpy[j].titre, cpy[j + 1].titre) > 0)
+            {
+                Livre temp = cpy[j];
+                cpy[j] = cpy[j + 1];
+                cpy[j + 1] = temp;
+            }
+        } 
+    }
+
+    afficherLesLivres(cpy);
+    free(cpy);
+}
+
+void afficherLesLivresTrierParAuteur(){
+    Livre *cpy = (Livre*) malloc(livresNombre * sizeof(Livre));
+    memcpy(cpy, livres, livresNombre * sizeof(Livre));
+
+    // Tri á bulles
+    for (int i = 0; i < livresNombre; i++)
+    {
+        for (int j = 0; j < livresNombre - 1; j++)
+        {
+            if (strcmp(cpy[j].auteur, cpy[j + 1].auteur) > 0)
+            {
+                Livre temp = cpy[j];
+                cpy[j] = cpy[j + 1];
+                cpy[j + 1] = temp;
+            }
+        } 
+    }
+
+    afficherLesLivres(cpy);
+    free(cpy);
+}
+
+void afficherLesLivresTrierParQuantite(){
+    Livre *cpy = (Livre*) malloc(livresNombre * sizeof(Livre));
+    memcpy(cpy, livres, livresNombre * sizeof(Livre));
+
+    // Tri á bulles
+    for (int i = 0; i < livresNombre; i++)
+    {
+        for (int j = 0; j < livresNombre - 1; j++)
+        {
+            if (cpy[j].quantite > cpy[j + 1].quantite)
+            {
+                Livre temp = cpy[j];
+                cpy[j] = cpy[j + 1];
+                cpy[j + 1] = temp;
+            }
+        } 
+    }
+
+    afficherLesLivres(cpy);
+    free(cpy);
+}
+
+void afficherLesLivresTrierParPrix(){
+    Livre *cpy = (Livre*) malloc(livresNombre * sizeof(Livre));
+    memcpy(cpy, livres, livresNombre * sizeof(Livre));
+
+    // Tri á bulles
+    for (int i = 0; i < livresNombre; i++)
+    {
+        for (int j = 0; j < livresNombre - 1; j++)
+        {
+            if (cpy[j].prix > cpy[j + 1].prix)
+            {
+                Livre temp = cpy[j];
+                cpy[j] = cpy[j + 1];
+                cpy[j + 1] = temp;
+            }
+        } 
+    }
+
+    afficherLesLivres(cpy);
+    free(cpy);
+}
+
 void ajouterUnLivre(){
     char titre[MAX_TITRE];
     char auteur[MAX_AUTEUR];
     int quantite;
     int prix;
 
-    printf("Entrer le titre de livre: ");
-    scanf("%s", titre);
+    printf("\tEntrer le titre de livre: ");
+    scanString(titre, sizeof(titre));
 
     int siExiste = estExiste(titre); // si livre exist, la valeur de variable est le id de livre
     if (siExiste != -1)
     {
-        printf("Entrer la quantite ajouter: ");
+        printf("\tEntrer la quantite ajouter: ");
         scanf("%d", &quantite);
 
         ajouteLaQuantite(siExiste, quantite);
         return;
     }
 
-    printf("Entrer le auteur de livre: ");
-    scanf("%s", auteur);
+    printf("\tEntrer le auteur de livre: ");
+    scanString(auteur, sizeof(auteur));
 
-    printf("Entrer la quantite de livre: ");
+    printf("\tEntrer la quantite de livre: ");
     scanf("%d", &quantite);
 
     if (quantite <= 0)
@@ -236,7 +323,7 @@ void ajouterUnLivre(){
     }
     
 
-    printf("Entrer le prix de livre: ");
+    printf("\tEntrer le prix de livre: ");
     scanf("%d", &prix);
 
     // utilise temp pour eviter les perde des données ou cas la realloc fail
@@ -319,6 +406,12 @@ void supprimerUnLivre(){
 
 void ajouteLaQuantite(int i, int quantite){
     livres[i].quantite += quantite;
+}
+
+void scanString(char string[], int size){
+    if (fgets(string, size, stdin) != NULL) {
+        string[strcspn(string, "\n")] = '\0';
+    }
 }
 
 int estExiste(char titre[]){
