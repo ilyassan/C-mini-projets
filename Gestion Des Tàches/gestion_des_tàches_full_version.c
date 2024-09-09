@@ -68,7 +68,8 @@ int main(){
         puts("\n\t1. Ajouter Des Tache");
         puts("\t2. Afficher Tous Les Taches");
         puts("\t3. Manipulation D'un Tache");
-        puts("\t5. Rechercher Un Tache");
+        puts("\t4. Rechercher Un Tache");
+        puts("\t5. Statistiques");
         puts("\t6. Quitter Le Program");
 
         printf("\nEntrer votre choix: ");
@@ -87,13 +88,13 @@ int main(){
         case 3:
             afficherSousMenuDeManipulation();
             continue;
-        case 5:
+        case 4:
             afficherSousMenuDeRecherche();
             continue;
+        case 5:
+            // markerUnTacheCommeCompleter();
+            break;
         case 6:
-            markerUnTacheCommeCompleter();
-            break;;
-        case 7:
             travail = 0;
             break;
         
@@ -146,7 +147,7 @@ void afficherSousMenuDesOptionsDeAjoute(){
         // Retour au menu principal
         choix = 0;
         while (choix != 1) {
-            puts("\n###############");
+            puts("\n----------------");
             puts("1. Retour");
             printf("Entrez votre choix: ");
             scanf("%d", &choix);
@@ -288,7 +289,7 @@ void afficherSousMenuDeAffichageDesTaches() {
         // Retour au menu principal
         choix = 0;
         while (choix != 1) {
-            puts("\n###############");
+            puts("\n----------------");
             puts("1. Retour");
             printf("Entrez votre choix: ");
             scanf("%d", &choix);
@@ -403,7 +404,7 @@ void afficherSousMenuDeManipulation(){
         // Retour au menu principal
         choix = 0;
         while (choix != 1) {
-            puts("\n###############");
+            puts("\n----------------");
             puts("1. Retour");
             printf("Entrez votre choix: ");
             scanf("%d", &choix);
@@ -581,7 +582,7 @@ void afficherSousMenuDeRecherche(){
         // Retour au menu principal
         choix = 0;
         while (choix != 1) {
-            puts("\n###############");
+            puts("\n----------------");
             puts("1. Retour");
             printf("Entrez votre choix: ");
             scanf("%d", &choix);
@@ -593,7 +594,7 @@ void afficherSousMenuDeRecherche(){
 void afficherUnTacheParId(){
     int id;
 
-    puts("Afficher Un Tache");
+    puts("Afficher Un Tache: ");
 
     printf("\tEntrer le ID de tache: ");
     scanf("%d", &id);
@@ -621,7 +622,7 @@ void afficherUnTacheParId(){
 void afficherUnTacheParTitre(){
     char titre[MAX_TITRE];
 
-    puts("Afficher Un Tache");
+    puts("Afficher Un Tache: ");
 
     printf("\tEntrer le titre de tache: ");
     scanString(titre, sizeof(titre));
