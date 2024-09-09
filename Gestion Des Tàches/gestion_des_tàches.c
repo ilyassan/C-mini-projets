@@ -38,6 +38,8 @@ void afficherSousMenuDeAffichage();
 void afficherTousLesTaches(Tache triTaches[], int croissante);
 void triEtAfficherLesTachesParTitre(int croissante);
 
+void modifierUnContact();
+
 int rechercheBinaireParNom(char titre[], int len);
 
 void enregistrerLesTaches();
@@ -77,7 +79,7 @@ int main(){
             afficherSousMenuDeAffichage();
             continue;
         case 3:
-        
+            modifierUnContact();
             break;
         case 4:
         
@@ -263,13 +265,74 @@ void triEtAfficherLesTachesParTitre(int croissante){
 }
 
 
+void modifierUnContact(){
+    char titre[MAX_TITRE];
+
+    puts("Modifier Un Taches: \n");
+
+    printf("\tEntrer le titre de tache: ");
+    scanString(titre, sizeof(titre));
+
+    int indice = -1;
+    for (int i = 0; i < tachesLen; i++)
+    {
+        if (strcmp(titre, taches[i].titre) == 0)
+        {
+            indice = i;
+            break;
+        }
+    }
+
+    if (indice == -1)
+    {
+        puts("\nCette tache n'existe pas.");
+        return;
+    }
+    
+    
+    char nouvelleTitre[MAX_TITRE];
+    char nouvelleDescription[MAX_DESCRIPTION];
+    Deadline deadline;
+
+    printf("\tEntrer la nouvelle titre de tache: ");
+    scanString(nouvelleTitre, sizeof(nouvelleTitre));
+
+    for (int i = 0; i < tachesLen; i++)
+    {
+        if (strcmp(nouvelleTitre, taches[i].titre) == 0)
+        {
+            puts("\nCette titre est deja existe.");
+            return;
+        }
+    }
+    
+    printf("\tEntrer la nouvelle description de tache: ");
+    scanString(nouvelleDescription, sizeof(nouvelleDescription));
+
+    
+    printf("\tEntrer l'annee de deadline: ");
+    scanf("%d", &deadline.annee);
+
+    printf("\tEntrer le mois de deadline: ");
+    scanf("%d", &deadline.mois);
+
+    printf("\tEntrer le jour de deadline: ");
+    scanf("%d", &deadline.jour);
+
+    strcpy(taches[indice].titre, nouvelleTitre);
+    strcpy(taches[indice].description, nouvelleDescription);
+    taches[indice].deadline = deadline;
+    
+    puts("Le contact est modifie avec succes.");
+}
+
+
+
 void scanString(char string[], int size){
     if (fgets(string, size, stdin) != NULL) {
         string[strcspn(string, "\n")] = '\0';
     }
 }
-
-
 // --------- Entregistrer Les Taches ---------
 void enregistrerLesTaches(){
     FILE *fichier = fopen(nomDeFichier, "w");
