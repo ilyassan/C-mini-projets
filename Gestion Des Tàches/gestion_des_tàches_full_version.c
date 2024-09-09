@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <signal.h>
+#include <time.h>
 
 
 // Définir les constants
@@ -13,6 +14,7 @@ typedef struct {
     int jour;
     int mois;
     int annee;
+    time_t timestamp;
 } Deadline;
 
 typedef struct
@@ -36,7 +38,7 @@ void afficherSousMenuDesOptionsDeAjoute();
 void ajouteDesTaches(int n);
 
 void afficherSousMenuDeAffichageDesTaches();
-void afficherTousLesTaches(Tache triTaches[], int croissante, int statut);
+void afficherTousLesTaches(Tache triTaches[], int croissante);
 void triEtAfficherLesTachesParTitre(int croissante);
 
 void afficherSousMenuDeManipulation();
@@ -50,6 +52,7 @@ void afficherUnTacheParTitre();
 
 void afficherLesOptionDesStatistiques();
 void afficherLesTachesParStatut(Tache triTaches[], int statut);
+void afficherLesTachesUrgent();
 
 void enregistrerLesTaches();
 void chargerLesTaches();
@@ -231,6 +234,18 @@ void ajouteDesTaches(int n){
         strcpy(taches[tachesLen].titre, titre);
         strcpy(taches[tachesLen].description, description);
         taches[tachesLen].statut = 0;
+
+        struct tm deadline_tm;
+        deadline_tm.tm_year = deadline.annee - 1900;
+        deadline_tm.tm_mon = deadline.mois - 1; 
+        deadline_tm.tm_mday = deadline.jour;
+        deadline_tm.tm_hour = 0;
+        deadline_tm.tm_min = 0;
+        deadline_tm.tm_sec = 0; 
+        deadline_tm.tm_isdst = -1;
+
+        deadline.timestamp = mktime(&deadline_tm);
+
         taches[tachesLen].deadline = deadline;
 
         tachesLen++;
@@ -263,10 +278,10 @@ void afficherSousMenuDeAffichageDesTaches() {
 
         switch (choix) {
             case 1:
-                afficherTousLesTaches(taches, 1, -1); // croissante
+                afficherTousLesTaches(taches, 1); // croissante
                 break;
             case 2:
-                afficherTousLesTaches(taches, 0, -1); // decroissante
+                afficherTousLesTaches(taches, 0); // decroissante
                 break;
             case 3:
                 triEtAfficherLesTachesParTitre(1); // decroissante
@@ -291,7 +306,7 @@ void afficherSousMenuDeAffichageDesTaches() {
         }
     }
 }
-void afficherTousLesTaches(Tache triTaches[], int croissante, int statut){
+void afficherTousLesTaches(Tache triTaches[], int croissante){
     puts("Les Taches: \n");
 
     // Afficher les colonnes
@@ -299,31 +314,7 @@ void afficherTousLesTaches(Tache triTaches[], int croissante, int statut){
     printf("\t| %-3s | %-30s | %-30s | %-10s | %-10s |\n", "ID", "Titre", "Description", "Statu", "DeadLine");
     printf("\t+-----+--------------------------------+--------------------------------+------------+------------+\n");
     
-
-    int count = 0;
-    if (statut == 0 || statut == 1)
-    {
-        for (int i = 0; i < tachesLen; i++)
-        {
-            if (triTaches[i].statut == statut)
-            {
-                count++;
-                printf("\t| %-3d | %-30s | %-30s | %-10s | %-2d/%-2d/%-4d |\n",
-                triTaches[i].id, triTaches[i].titre, triTaches[i].description, triTaches[i].statut ? "finalisee" : "a realiser",
-                triTaches[i].deadline.jour, triTaches[i].deadline.mois, triTaches[i].deadline.annee 
-            );
-            printf("\t+-----+--------------------------------+--------------------------------+------------+------------+\n");
-            }
-        }
-    }
-
-    if (count > 0)
-    {
-        return;
-    }
-    
-
-    if (tachesLen == 0 || (count == 0 && statut != -1))
+    if (tachesLen == 0)
     {
         printf("\t|                             ");
         printf("%-40s", "N'existe pas des taches pour afficher.");
@@ -361,7 +352,7 @@ void triEtAfficherLesTachesParTitre(int croissante){
         } 
     }
 
-    afficherTousLesTaches(cpy, croissante, -1);
+    afficherTousLesTaches(cpy, croissante);
     free(cpy);
 }
 
@@ -644,9 +635,10 @@ void afficherLesOptionDesStatistiques(){
 
     while (1) {
         
-        puts("\n\t1. Afficher seulement les taches a realiser");
-        puts("\t2. Afficher seulement les taches finalisee");
-        puts("\t3. Retour au menu principal");
+        puts("\n\t1. Afficher les taches a realiser");
+        puts("\t2. Afficher les taches finalisee");
+        puts("\t3. Afficher les taches urgent ( < 3 jours)");
+        puts("\t4. Retour au menu principal");
         
         printf("\nEntrer votre choix: ");
         scanf("%d", &choix);
@@ -660,6 +652,9 @@ void afficherLesOptionDesStatistiques(){
                 afficherLesTachesParStatut(taches, 1); 
                 break;
             case 3:
+                afficherLesTachesUrgent(); 
+                break;
+            case 4:
                 return; // Retourne au menu principal
             default:
                 puts("Choix invalid.");
@@ -697,6 +692,45 @@ void afficherLesTachesParStatut(Tache triTaches[], int statut){
             triTaches[i].deadline.jour, triTaches[i].deadline.mois, triTaches[i].deadline.annee 
         );
         printf("\t+-----+--------------------------------+--------------------------------+------------+------------+\n");
+        }
+    }
+
+    if (count == 0)
+    {
+        printf("\t|                             ");
+        printf("%-40s", "N'existe pas des taches pour afficher.");
+        printf("                            |\n");
+        printf("\t+-----+--------------------------------+--------------------------------+------------+------------+\n");
+        return;
+    }
+}
+void afficherLesTachesUrgent(){
+    puts("Les Taches: \n");
+
+    // Afficher les colonnes
+    printf("\t+-----+--------------------------------+--------------------------------+------------+------------+\n");
+    printf("\t| %-3s | %-30s | %-30s | %-10s | %-10s |\n", "ID", "Titre", "Description", "Statu", "DeadLine");
+    printf("\t+-----+--------------------------------+--------------------------------+------------+------------+\n");
+    
+    int count = 0;
+
+    time_t currentTime = time(NULL);
+    for (int i = 0; i < tachesLen; i++) {
+        Deadline deadline = taches[i].deadline;
+        struct tm deadline_tm = *localtime(&deadline.timestamp);
+        struct tm current_tm = *localtime(&currentTime);
+
+        int diff_day = (deadline_tm.tm_year - current_tm.tm_year) * 365 +
+                       (deadline_tm.tm_mon - current_tm.tm_mon) * 30 +
+                       (deadline_tm.tm_mday - current_tm.tm_mday);
+
+        if (diff_day <= 3) {
+            count++;
+                printf("\t| %-3d | %-30s | %-30s | %-10s | %-2d/%-2d/%-4d |\n",
+                taches[i].id, taches[i].titre, taches[i].description, taches[i].statut ? "finalisee" : "a realiser",
+                taches[i].deadline.jour, taches[i].deadline.mois, taches[i].deadline.annee 
+            );
+            printf("\t+-----+--------------------------------+--------------------------------+------------+------------+\n");
         }
     }
 
