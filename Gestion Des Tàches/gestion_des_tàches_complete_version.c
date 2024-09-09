@@ -752,8 +752,8 @@ void printLesColonnes(){
     printf("\t+-----+--------------------------------+--------------------------------+------------+------------+\n");
 }
 void printUnTache(Tache tache){
-    printf("\t| %-3d | %-30s | %-30s | %-10s | %-2d/%-2d/%-4d |\n",
-        tache.id, tache.titre, tache.description, tache.statut ? "finalisee" : "a realiser",
+    printf("\t| %-3d | %-30s | %-30s | %-10s | %02d/%02d/%04d |\n",
+        tache.id, tache.titre, tache.description, tache.statut ? "Finalisee" : "A realiser",
         tache.deadline.jour, tache.deadline.mois, tache.deadline.annee 
     );
     printf("\t+-----+--------------------------------+--------------------------------+------------+------------+\n");
