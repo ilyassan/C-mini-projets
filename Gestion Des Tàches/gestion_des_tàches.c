@@ -33,7 +33,7 @@ char fichier[] = "taches.txt";
 
 // Définir les fonctions
 void ajouteUnTache();
-int insertionAvecOrderDeNom(char titre[], char description[]);
+int insertionAvecOrderDeNom(char titre[], char description[], Deadline deadline);
 
 
 int rechercheBinaireParNom(char titre[], int len);
@@ -121,10 +121,19 @@ void ajouteUnTache(){
     printf("\tEntrer la description de tache: ");
     scanString(description, sizeof(description));
 
+    printf("\tEntrer l'annee de deadline: ");
+    scanf("%d", &deadline.annee);
+
+    printf("\tEntrer le mois de deadline: ");
+    scanf("%d", &deadline.mois);
+
+    printf("\tEntrer le jour de deadline: ");
+    scanf("%d", &deadline.jour);
+
     printf("\n");
 
     // insertion avec order
-    if (insertionAvecOrderDeNom(titre, description))
+    if (insertionAvecOrderDeNom(titre, description, deadline))
     {
         puts("La Tache est ajoute avec succes.");
         return;
@@ -133,7 +142,7 @@ void ajouteUnTache(){
     puts("Erreur lors de l'ajout d'un Tache.");
 }
 
-int insertionAvecOrderDeNom(char titre[], char description[]) {
+int insertionAvecOrderDeNom(char titre[], char description[], Deadline deadline) {
     Tache *temp = (Tache*) realloc(taches, (tachesLen + 1) * sizeof(Tache));
     if (temp == NULL)
     {
@@ -157,6 +166,7 @@ int insertionAvecOrderDeNom(char titre[], char description[]) {
 
     strcpy(taches[indice].titre, titre);
     strcpy(taches[indice].description, description);
+    taches[indice].deadline = deadline;
 
     tachesLen++;
 
