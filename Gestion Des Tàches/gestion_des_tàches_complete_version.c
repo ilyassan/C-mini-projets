@@ -40,6 +40,7 @@ void ajouteDesTaches(int n);
 void afficherSousMenuDeAffichageDesTaches();
 void afficherTousLesTaches(Tache triTaches[], int croissante);
 void triEtAfficherLesTachesParTitre(int croissante);
+void triEtAfficherLesTachesParDeadline(int croissante);
 
 void afficherSousMenuDeManipulation();
 void modifierUnTache();
@@ -54,12 +55,17 @@ void afficherLesOptionDesStatistiques();
 void afficherLesTachesParStatut(Tache triTaches[], int statut);
 void afficherLesTachesUrgent();
 
-void enregistrerLesTaches();
-void chargerLesTaches();
+
+void printLesColonnes();
+void printUnTache(Tache tache);
+void printNexistePas();
+
 void scanString(char string[], int size);
 long long int obtenirTimestamp(Deadline deadline);
 int differenceDesJours(Deadline deadline, time_t currentTime);
 
+void enregistrerLesTaches();
+void chargerLesTaches();
 
 // --------- Le Main Fonction ---------
 int main(){
@@ -125,6 +131,7 @@ int main(){
 }
 
 
+// --------- Les Fonction D'Ajoutation ---------
 void afficherSousMenuDesOptionsDeAjoute(){
     int choix;
 
@@ -254,16 +261,18 @@ void ajouteDesTaches(int n){
     }
 }
 
+// --------- Les Fonction D'Affichage et de tri ---------
 void afficherSousMenuDeAffichageDesTaches() {
     int choix;
 
     while (1) {
         
-        puts("\n\t1. Selon l'ordre de l\'ajoutation (croissante)");
-        puts("\t2. Selon l'ordre de l\'ajoutation (decroissante)");
-        puts("\t3. Selon l'ordre de titre (croissante)");
-        puts("\t4. Selon l'ordre de titre (decroissante)");
-        puts("\t5. Retour au menu principal");
+        puts("\n\t1. Selon l'ordre de titre (croissante)");
+        puts("\t2. Selon l'ordre de titre (decroissante)");
+        puts("\t3. Selon l'ordre de deadline (croissante)");
+        puts("\t4. Selon l'ordre de deadline (decroissante)");
+        puts("\t5. Afficher les taches urgent ( < 3 jours)");
+        puts("\t6. Retour au menu principal");
         
         printf("\nEntrer votre choix: ");
         scanf("%d", &choix);
@@ -271,18 +280,21 @@ void afficherSousMenuDeAffichageDesTaches() {
 
         switch (choix) {
             case 1:
-                afficherTousLesTaches(taches, 1); // croissante
+                triEtAfficherLesTachesParTitre(1); // croissante
                 break;
             case 2:
-                afficherTousLesTaches(taches, 0); // decroissante
-                break;
-            case 3:
-                triEtAfficherLesTachesParTitre(1); // decroissante
-                break;
-            case 4:
                 triEtAfficherLesTachesParTitre(0); // decroissante
                 break;
+            case 3:
+                triEtAfficherLesTachesParDeadline(1); // croissante
+                break;
+            case 4:
+                triEtAfficherLesTachesParDeadline(0); // decroissante
+                break;
             case 5:
+                afficherLesTachesUrgent();
+                break;
+            case 6:
                 return; // Retourne au menu principal
             default:
                 puts("Choix invalid.");
@@ -303,28 +315,18 @@ void afficherTousLesTaches(Tache triTaches[], int croissante){
     puts("Les Taches: \n");
 
     // Afficher les colonnes
-    printf("\t+-----+--------------------------------+--------------------------------+------------+------------+\n");
-    printf("\t| %-3s | %-30s | %-30s | %-10s | %-10s |\n", "ID", "Titre", "Description", "Statu", "DeadLine");
-    printf("\t+-----+--------------------------------+--------------------------------+------------+------------+\n");
+    printLesColonnes();
     
     if (tachesLen == 0)
     {
-        printf("\t|                             ");
-        printf("%-40s", "N'existe pas des taches pour afficher.");
-        printf("                            |\n");
-        printf("\t+-----+--------------------------------+--------------------------------+------------+------------+\n");
-        return;
+        printNexistePas();
     }
 
     // Afficher les lignes
     for (int i = 0; i < tachesLen; i++)
     {
         int indice = croissante ? i : tachesLen - 1 - i;
-        printf("\t| %-3d | %-30s | %-30s | %-10s | %-2d/%-2d/%-4d |\n",
-            triTaches[indice].id, triTaches[indice].titre, triTaches[indice].description, triTaches[indice].statut ? "finalisee" : "a realiser",
-            triTaches[indice].deadline.jour, triTaches[indice].deadline.mois, triTaches[indice].deadline.annee 
-        );
-        printf("\t+-----+--------------------------------+--------------------------------+------------+------------+\n");
+        printUnTache(triTaches[indice]);
     }
 }
 void triEtAfficherLesTachesParTitre(int croissante){
@@ -348,7 +350,56 @@ void triEtAfficherLesTachesParTitre(int croissante){
     afficherTousLesTaches(cpy, croissante);
     free(cpy);
 }
+void triEtAfficherLesTachesParDeadline(int croissante){
+    Tache *cpy = (Tache*) malloc(tachesLen * sizeof(Tache));
+    memcpy(cpy, taches, tachesLen * sizeof(Tache));
 
+    // Tri á bulles
+    for (int i = 0; i < tachesLen; i++)
+    {
+        for (int j = 0; j < tachesLen - 1; j++)
+        {
+            if (cpy[j].deadline.timestamp > cpy[j + 1].deadline.timestamp)
+            {
+                Tache temp = cpy[j];
+                cpy[j] = cpy[j + 1];
+                cpy[j + 1] = temp;
+            }
+        } 
+    }
+
+    afficherTousLesTaches(cpy, croissante);
+    free(cpy);
+}
+void afficherLesTachesUrgent(){
+    puts("Les Taches: \n");
+
+    // Afficher les colonnes
+    printLesColonnes();
+    
+    const int tachesAvecDeadlineInferieureA = 3;
+
+    int count = 0;
+
+    time_t currentTime = time(NULL);
+    for (int i = 0; i < tachesLen; i++) {
+        Deadline deadline = taches[i].deadline;
+        
+        int diff_jours = differenceDesJours(deadline, currentTime);
+
+        if (diff_jours <= tachesAvecDeadlineInferieureA && diff_jours >= 0) {
+            count++;
+            printUnTache(taches[i]);
+        }
+    }
+
+    if (count == 0)
+    {
+        printNexistePas();
+    }
+}
+
+// --------- Les Fonction De Manipulation ---------
 void afficherSousMenuDeManipulation(){
     int choix;
 
@@ -531,6 +582,7 @@ void supprimerUnTache(){
 }
 
 
+// --------- Les Fonction De Recherche ---------
 void afficherSousMenuDeRecherche(){
     int choix;
 
@@ -623,15 +675,15 @@ void afficherUnTacheParTitre(){
     puts("N'existe pas un tache avec cette titre.");
 }
 
+// --------- Les Fonction De Statistiques ---------
 void afficherLesOptionDesStatistiques(){
     int choix;
 
     while (1) {
         
-        puts("\n\t1. Afficher les taches a realiser");
-        puts("\t2. Afficher les taches finalisee");
-        puts("\t3. Afficher les taches urgent ( < 3 jours)");
-        puts("\t4. Retour au menu principal");
+        puts("\n\t1. Les taches a realiser");
+        puts("\t2. Les taches finalisee");
+        puts("\t3. Retour au menu principal");
         
         printf("\nEntrer votre choix: ");
         scanf("%d", &choix);
@@ -645,9 +697,6 @@ void afficherLesOptionDesStatistiques(){
                 afficherLesTachesParStatut(taches, 1); 
                 break;
             case 3:
-                afficherLesTachesUrgent(); 
-                break;
-            case 4:
                 return; // Retourne au menu principal
             default:
                 puts("Choix invalid.");
@@ -668,10 +717,7 @@ void afficherLesTachesParStatut(Tache triTaches[], int statut){
     puts("Les Taches: \n");
 
     // Afficher les colonnes
-    printf("\t+-----+--------------------------------+--------------------------------+------------+------------+\n");
-    printf("\t| %-3s | %-30s | %-30s | %-10s | %-10s |\n", "ID", "Titre", "Description", "Statu", "DeadLine");
-    printf("\t+-----+--------------------------------+--------------------------------+------------+------------+\n");
-    
+    printLesColonnes();
 
     int count = 0;
 
@@ -680,65 +726,43 @@ void afficherLesTachesParStatut(Tache triTaches[], int statut){
         if (triTaches[i].statut == statut)
         {
             count++;
-            printf("\t| %-3d | %-30s | %-30s | %-10s | %-2d/%-2d/%-4d |\n",
-            triTaches[i].id, triTaches[i].titre, triTaches[i].description, triTaches[i].statut ? "finalisee" : "a realiser",
-            triTaches[i].deadline.jour, triTaches[i].deadline.mois, triTaches[i].deadline.annee 
-        );
-        printf("\t+-----+--------------------------------+--------------------------------+------------+------------+\n");
+            printUnTache(triTaches[i]);
         }
     }
 
     if (count == 0)
     {
-        printf("\t|                             ");
-        printf("%-40s", "N'existe pas des taches pour afficher.");
-        printf("                            |\n");
-        printf("\t+-----+--------------------------------+--------------------------------+------------+------------+\n");
-        return;
-    }
-}
-void afficherLesTachesUrgent(){
-    puts("Les Taches: \n");
-
-    // Afficher les colonnes
-    printf("\t+-----+--------------------------------+--------------------------------+------------+------------+\n");
-    printf("\t| %-3s | %-30s | %-30s | %-10s | %-10s |\n", "ID", "Titre", "Description", "Statu", "DeadLine");
-    printf("\t+-----+--------------------------------+--------------------------------+------------+------------+\n");
-    
-    const int tachesAvecDeadlineInferieureA = 3;
-
-    int count = 0;
-
-    time_t currentTime = time(NULL);
-    for (int i = 0; i < tachesLen; i++) {
-        Deadline deadline = taches[i].deadline;
-        
-        int diff_jours = differenceDesJours(deadline, currentTime);
-
-        if (diff_jours <= tachesAvecDeadlineInferieureA && diff_jours >= 0) {
-            count++;
-                printf("\t| %-3d | %-30s | %-30s | %-10s | %-2d/%-2d/%-4d |\n",
-                taches[i].id, taches[i].titre, taches[i].description, taches[i].statut ? "finalisee" : "a realiser",
-                taches[i].deadline.jour, taches[i].deadline.mois, taches[i].deadline.annee 
-            );
-            printf("\t+-----+--------------------------------+--------------------------------+------------+------------+\n");
-        }
+        printNexistePas();
     }
 
-    if (count == 0)
-    {
-        printf("\t|                             ");
-        printf("%-40s", "N'existe pas des taches pour afficher.");
-        printf("                            |\n");
-        printf("\t+-----+--------------------------------+--------------------------------+------------+------------+\n");
-        return;
-    }
+    printf("\tNombre Total: %d", count);
 }
 
+
+// --------- Des Fonction Auxiliares ---------
 void scanString(char string[], int size){
     if (fgets(string, size, stdin) != NULL) {
         string[strcspn(string, "\n")] = '\0';
     }
+}
+
+void printLesColonnes(){
+    printf("\t+-----+--------------------------------+--------------------------------+------------+------------+\n");
+    printf("\t| %-3s | %-30s | %-30s | %-10s | %-10s |\n", "ID", "Titre", "Description", "Statu", "DeadLine");
+    printf("\t+-----+--------------------------------+--------------------------------+------------+------------+\n");
+}
+void printUnTache(Tache tache){
+    printf("\t| %-3d | %-30s | %-30s | %-10s | %-2d/%-2d/%-4d |\n",
+        tache.id, tache.titre, tache.description, tache.statut ? "finalisee" : "a realiser",
+        tache.deadline.jour, tache.deadline.mois, tache.deadline.annee 
+    );
+    printf("\t+-----+--------------------------------+--------------------------------+------------+------------+\n");
+}  
+void printNexistePas(){
+    printf("\t|                             ");
+    printf("%-40s", "N'existe pas des taches pour afficher.");
+    printf("                            |\n");
+    printf("\t+-----+--------------------------------+--------------------------------+------------+------------+\n");
 }
 
 long long int obtenirTimestamp(Deadline deadline){
