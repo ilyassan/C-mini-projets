@@ -45,9 +45,11 @@ void markerUnTacheCommeCompleter();
 void supprimerUnTache();
 
 void afficherSousMenuDeRecherche();
-
 void afficherUnTacheParId();
 void afficherUnTacheParTitre();
+
+void afficherLesOptionDesStatistiques();
+void afficherLesTachesParStatut(Tache triTaches[], int statut);
 
 void enregistrerLesTaches();
 void chargerLesTaches();
@@ -92,8 +94,8 @@ int main(){
             afficherSousMenuDeRecherche();
             continue;
         case 5:
-            // markerUnTacheCommeCompleter();
-            break;
+            afficherLesOptionDesStatistiques();
+            continue;;
         case 6:
             travail = 0;
             break;
@@ -253,9 +255,7 @@ void afficherSousMenuDeAffichageDesTaches() {
         puts("\t2. Selon l'ordre de l\'ajoutation (decroissante)");
         puts("\t3. Selon l'ordre de titre (croissante)");
         puts("\t4. Selon l'ordre de titre (decroissante)");
-        puts("\t5. Afficher seulement les taches a realiser");
-        puts("\t6. Afficher seulement les taches finalisee");
-        puts("\t7. Retour au menu principal");
+        puts("\t5. Retour au menu principal");
         
         printf("\nEntrer votre choix: ");
         scanf("%d", &choix);
@@ -275,12 +275,6 @@ void afficherSousMenuDeAffichageDesTaches() {
                 triEtAfficherLesTachesParTitre(0); // decroissante
                 break;
             case 5:
-                afficherTousLesTaches(taches, 0, 0); 
-                break;
-            case 6:
-                afficherTousLesTaches(taches, 0, 1); 
-                break;
-            case 7:
                 return; // Retourne au menu principal
             default:
                 puts("Choix invalid.");
@@ -590,7 +584,6 @@ void afficherSousMenuDeRecherche(){
         }
     }
 }
-
 void afficherUnTacheParId(){
     int id;
 
@@ -618,7 +611,6 @@ void afficherUnTacheParId(){
 
     puts("N'existe pas un tache avec cette ID.");
 }
-
 void afficherUnTacheParTitre(){
     char titre[MAX_TITRE];
 
@@ -647,6 +639,76 @@ void afficherUnTacheParTitre(){
     puts("N'existe pas un tache avec cette titre.");
 }
 
+void afficherLesOptionDesStatistiques(){
+    int choix;
+
+    while (1) {
+        
+        puts("\n\t1. Afficher seulement les taches a realiser");
+        puts("\t2. Afficher seulement les taches finalisee");
+        puts("\t3. Retour au menu principal");
+        
+        printf("\nEntrer votre choix: ");
+        scanf("%d", &choix);
+        while (getchar() != '\n');
+
+        switch (choix) {
+            case 1:
+                afficherLesTachesParStatut(taches, 0); 
+                break;
+            case 2:
+                afficherLesTachesParStatut(taches, 1); 
+                break;
+            case 3:
+                return; // Retourne au menu principal
+            default:
+                puts("Choix invalid.");
+        }
+
+        // Retour au menu principal
+        choix = 0;
+        while (choix != 1) {
+            puts("\n----------------");
+            puts("1. Retour");
+            printf("Entrez votre choix: ");
+            scanf("%d", &choix);
+            while (getchar() != '\n');
+        }
+    }
+}
+void afficherLesTachesParStatut(Tache triTaches[], int statut){
+    puts("Les Taches: \n");
+
+    // Afficher les colonnes
+    printf("\t+-----+--------------------------------+--------------------------------+------------+------------+\n");
+    printf("\t| %-3s | %-30s | %-30s | %-10s | %-10s |\n", "ID", "Titre", "Description", "Statu", "DeadLine");
+    printf("\t+-----+--------------------------------+--------------------------------+------------+------------+\n");
+    
+
+    int count = 0;
+
+    for (int i = 0; i < tachesLen; i++)
+    {
+        if (triTaches[i].statut == statut)
+        {
+            count++;
+            printf("\t| %-3d | %-30s | %-30s | %-10s | %-2d/%-2d/%-4d |\n",
+            triTaches[i].id, triTaches[i].titre, triTaches[i].description, triTaches[i].statut ? "finalisee" : "a realiser",
+            triTaches[i].deadline.jour, triTaches[i].deadline.mois, triTaches[i].deadline.annee 
+        );
+        printf("\t+-----+--------------------------------+--------------------------------+------------+------------+\n");
+        }
+    }
+
+    if (count == 0)
+    {
+        printf("\t|                             ");
+        printf("%-40s", "N'existe pas des taches pour afficher.");
+        printf("                            |\n");
+        printf("\t+-----+--------------------------------+--------------------------------+------------+------------+\n");
+        return;
+    }
+}
 
 void scanString(char string[], int size){
     if (fgets(string, size, stdin) != NULL) {
