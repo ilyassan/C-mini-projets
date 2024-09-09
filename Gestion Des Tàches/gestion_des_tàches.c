@@ -38,7 +38,9 @@ void afficherSousMenuDeAffichage();
 void afficherTousLesTaches(Tache triTaches[], int croissante);
 void triEtAfficherLesTachesParTitre(int croissante);
 
-void modifierUnContact();
+void modifierUnTache();
+
+void supprimerUnTache();
 
 int rechercheBinaireParNom(char titre[], int len);
 
@@ -79,10 +81,10 @@ int main(){
             afficherSousMenuDeAffichage();
             continue;
         case 3:
-            modifierUnContact();
+            modifierUnTache();
             break;
         case 4:
-        
+            supprimerUnTache();
             break;
         case 5:
         
@@ -265,7 +267,7 @@ void triEtAfficherLesTachesParTitre(int croissante){
 }
 
 
-void modifierUnContact(){
+void modifierUnTache(){
     char titre[MAX_TITRE];
 
     puts("Modifier Un Taches: \n");
@@ -323,16 +325,67 @@ void modifierUnContact(){
     strcpy(taches[indice].description, nouvelleDescription);
     taches[indice].deadline = deadline;
     
-    puts("Le contact est modifie avec succes.");
+    puts("Le tache est modifie avec succes.");
 }
 
+void supprimerUnTache(){
+    char titre[MAX_TITRE];
+    puts("Supprimer Un Tache: \n");
 
+    printf("\tEntrer le titre de Tache: ");
+    scanString(titre, sizeof(titre));
+
+    printf("\n");
+
+    int indice = -1;
+    for (int i = 0; i < tachesLen; i++)
+    {
+        if (strcmp(titre, taches[i].titre) == 0)
+        {
+            indice = i;
+            break;
+        }
+    }
+
+    if (indice == -1)
+    {
+        puts("\nCette tache n'existe pas.");
+        return;
+    }
+    
+
+    for (int i = indice; i < tachesLen - 1; i++)
+    {
+        taches[i] = taches[i + 1];
+    }
+
+    tachesLen--;
+
+    if (tachesLen == 0)
+    {
+        taches = NULL;
+        return;
+    }
+
+    Tache *temp = (Tache*) realloc(taches, tachesLen * sizeof(Tache));
+    if (temp == NULL)
+    {
+        puts("Probleme lors de supprimer le tache.");
+        return;
+    }
+
+    // Allocation Succéss
+    taches = temp;
+
+    puts("Tache supprime avec succes.");
+}
 
 void scanString(char string[], int size){
     if (fgets(string, size, stdin) != NULL) {
         string[strcspn(string, "\n")] = '\0';
     }
 }
+
 // --------- Entregistrer Les Taches ---------
 void enregistrerLesTaches(){
     FILE *fichier = fopen(nomDeFichier, "w");
@@ -356,7 +409,6 @@ void enregistrerLesTaches(){
     fclose(fichier);
     puts("\nLes taches enregistre avec succes.");
 }
-
 
 // --------- Charger Les Taches ---------
 void chargerLesTaches() {
