@@ -18,7 +18,9 @@ Livre *livres = NULL;
 int livresNombre = 0;
 
 
-void afficherLesLivres(); // Afficher tous les livres
+int afficherLesLivres(Livre livresTrier[]); // Afficher tous les livres
+void afficherSousMenu();
+int afficherLesOptionOrder();
 void ajouterUnLivre(); // Ajouter un livre en  stock
 void metreAjourLaQuantiteDeLivre();
 void supprimerUnLivre();
@@ -31,14 +33,14 @@ int estExiste(char titre[]); // Chercher le livre par titre
 
 int main(){
     
-    int run = 1;
+    int travail = 1;
     
-    while (run)
+    while (travail)
     {
         puts("#### Management de stock des livres ####");
         puts("\n\t1. Afficher Tous les Livres Disponibles");
         puts("\t2. Ajoute Un Livre Au Stock");
-        puts("\t3. Mettre à Jour La Quantite D'un Livre");
+        puts("\t3. Mettre a Jour La Quantite D'un Livre");
         puts("\t4. Supprimer Un Livre");
         puts("\t5. Afficher Le Nombre Des Livres");
         puts("\t6. Quitter Le Program");
@@ -54,7 +56,7 @@ int main(){
         switch (choix)
         {
         case 1:
-            afficherLesLivres();
+            afficherSousMenu();
             break;
         case 2:
             ajouterUnLivre();
@@ -69,7 +71,7 @@ int main(){
             printf("Le nombre des livres: %d", livresNombre);
             break;
         case 6:
-            run = 0;
+            travail = 0;
             break;
         
         default:
@@ -78,7 +80,7 @@ int main(){
 
         // Retour au menu principal
         choix = 0;
-        while (choix != 1 && run != 0) {
+        while (choix != 1 && travail != 0) {
             puts("\n###############");
             puts("1. Retour");
             printf("Entrez votre choix: ");
@@ -90,18 +92,115 @@ int main(){
 }
 
 
-void afficherLesLivres(){
+int afficherLesLivres(Livre livresTrier[]){
+    printf("\n");
     if (livresNombre == 0)
     {
-        puts("Pas des livres pour afficher.");
-        return;
+        puts("N'existe pas des livres pour afficher.");
+        return -1;
     }
+
+    int croissante = afficherLesOptionOrder();
+    if (croissante == -1) // Option invalid
+    {
+        return -1;
+    }
+    
     
     puts("Tous les livres en le stock:");
     for (int i = 0; i < livresNombre; i++)
     {
+        int indice = croissante ? i : livresNombre - 1 - i;
        printf("\t%d => Titre: %s / Auteur: %s / Quantite: %d / Prix: %.2f\n",
-       i + 1, livres[i].titre, livres[i].auteur, livres[i].quantite, livres[i].prix);
+       i + 1, livresTrier[indice].titre, livresTrier[indice].auteur, livresTrier[indice].quantite, livresTrier[indice].prix);
+    }
+
+    return 1;
+}
+
+void afficherSousMenu() {
+    int choix;
+
+    while (1) {
+        
+        puts("\n\t1. Selon l'ordre d\'ajoutation");
+        puts("\t2. Selon l'ordre alphabetique de titre");
+        puts("\t3. Selon l'ordre alphabetique d'auteur");
+        puts("\t4. Selon l'ordre de quantite");
+        puts("\t5. Selon l'ordre de prix");
+        puts("\t6. Retour au menu principal");
+        
+        printf("\nEntrer votre choix: ");
+        scanf("%d", &choix);
+        while (getchar() != '\n');
+
+        switch (choix) {
+            case 1:
+                if (afficherLesLivres(livres) == -1) continue;
+                break;
+            case 2:
+                // afficherLesLivresTrierParTitre();
+                break;
+            case 3:
+                // afficherLesLivresTrierParAuteur();
+                break;
+            case 4:
+                // afficherLesLivresTrierParQuantite();
+                break;
+            case 5:
+                // afficherLesLivresTrierParPrix();
+                break;
+            case 6:
+                return; // Retourne au menu principal
+            default:
+                puts("Choix invalid.");
+        }
+
+        // Retour au menu principal
+        choix = 0;
+        while (choix != 1) {
+            puts("\n###############");
+            puts("1. Retour");
+            printf("Entrez votre choix: ");
+            scanf("%d", &choix);
+            while (getchar() != '\n');
+        }
+    }
+}
+
+int afficherLesOptionOrder(){
+    int choix;
+
+    while (1) {
+        
+        puts("\t1. Selon l'ordre croissante");
+        puts("\t2. Selon l'ordre decroissante");
+        puts("\t3. Retour au menu principal");
+        
+        printf("\nEntrer votre choix: ");
+        scanf("%d", &choix);
+        while (getchar() != '\n');
+
+        switch (choix) {
+            case 1:
+                return 1; // croissante
+            case 2:
+                return 2;// décroissante
+            case 3:
+                return -1; // Retourne au menu principal
+            default:
+                puts("Choix invalid.");
+        }
+
+        // Retour au menu principal
+        choix = 0;
+        while (choix != 1) {
+            puts("\n###############");
+            puts("1. Retour");
+            printf("Entrez votre choix: ");
+            scanf("%d", &choix);
+            while (getchar() != '\n');
+        }
     }
 }
 
@@ -132,7 +231,7 @@ void ajouterUnLivre(){
 
     if (quantite <= 0)
     {
-        puts("Erreur lors de l'ajout d'un livre");
+        puts("Erreur lors de l'ajout d'un livre.");
         return;
     }
     
@@ -145,7 +244,7 @@ void ajouterUnLivre(){
 
     if (temp == NULL)
     {
-        puts("Erreur lors de l'ajout d'un livre");
+        puts("Erreur lors de l'ajout d'un livre.");
         return;
     }
     // Allocation Succéss
@@ -159,7 +258,7 @@ void ajouterUnLivre(){
 
     livresNombre++;
 
-    puts("Le livre est ajoute avec succéss.");
+    puts("Le livre est ajoute avec succes.");
 }
 
 void metreAjourLaQuantiteDeLivre(){
