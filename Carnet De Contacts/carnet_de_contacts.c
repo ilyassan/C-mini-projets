@@ -27,7 +27,7 @@ char fichier[] = "contacts.txt";
 // Définir les fonctions
 
 void ajouteUnContact();
-int insertionAvecOrderDeNom(char nom[], char telephone[], char email[], int len);
+int insertionAvecOrderDeNom(char nom[], char telephone[], char email[]);
 
 void afficherTousLesContact(Contact triContacts[], int croissante);
 void afficherSousMenu();
@@ -144,7 +144,7 @@ void ajouteUnContact(){
     printf("\n");
 
     // insertion avec order
-    if (insertionAvecOrderDeNom(nom, telephone, email, contactsLen))
+    if (insertionAvecOrderDeNom(nom, telephone, email))
     {
         puts("Le contact est ajoute avec succes.");
         return;
@@ -153,7 +153,7 @@ void ajouteUnContact(){
     puts("Erreur lors de l'ajout d'un contact.");
 }
 
-int insertionAvecOrderDeNom(char nom[], char telephone[], char email[], int len) {
+int insertionAvecOrderDeNom(char nom[], char telephone[], char email[]) {
     Contact *temp = (Contact*) realloc(contacts, (contactsLen + 1) * sizeof(Contact));
     if (temp == NULL)
     {
@@ -162,16 +162,16 @@ int insertionAvecOrderDeNom(char nom[], char telephone[], char email[], int len)
     // Allocation Succéss
     contacts = temp;
 
-    int indice = len;
+    int indice = contactsLen;
 
-    for (int i = 0; i < len; i++) {
+    for (int i = 0; i < contactsLen; i++) {
         if (strcmp(nom, contacts[i].nom) < 0) {
             indice = i;
             break;
         }
     }
 
-    for (int i = len; i > indice; i--) {
+    for (int i = contactsLen; i > indice; i--) {
         contacts[i] = contacts[i - 1];
     }
 
@@ -331,7 +331,7 @@ void modifierUnContact(){
         &&
         supprimerUnContactParIndice(indice)
         && 
-        insertionAvecOrderDeNom(nouvelleNom, nouvelleTelephone, nouvelleEmail, contactsLen)
+        insertionAvecOrderDeNom(nouvelleNom, nouvelleTelephone, nouvelleEmail)
         )
     {
         puts("Le contact est modifie avec succes.");
