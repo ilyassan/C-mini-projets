@@ -39,10 +39,9 @@ void afficherSousMenuDeAffichageDesTaches();
 void afficherTousLesTaches(Tache triTaches[], int croissante, int statut);
 void triEtAfficherLesTachesParTitre(int croissante);
 
+void afficherSousMenuDeManipulation();
 void modifierUnTache();
-
 void markerUnTacheCommeCompleter();
-
 void supprimerUnTache();
 
 void afficherSousMenuDeRecherche();
@@ -68,11 +67,9 @@ int main(){
         puts("#### Gestion des Taches ####");
         puts("\n\t1. Ajouter Des Tache");
         puts("\t2. Afficher Tous Les Taches");
-        puts("\t3. Modifier Un Tache");
-        puts("\t4. Supprimer Un Tache");
+        puts("\t3. Manipulation D'un Tache");
         puts("\t5. Rechercher Un Tache");
-        puts("\t6. Mark Un Tache Comme Completer");
-        puts("\t7. Quitter Le Program");
+        puts("\t6. Quitter Le Program");
 
         printf("\nEntrer votre choix: ");
         int choix;
@@ -88,11 +85,8 @@ int main(){
             afficherSousMenuDeAffichageDesTaches();
             continue;
         case 3:
-            modifierUnTache();
-            break;
-        case 4:
-            supprimerUnTache();
-            break;
+            afficherSousMenuDeManipulation();
+            continue;
         case 5:
             afficherSousMenuDeRecherche();
             continue;
@@ -160,7 +154,6 @@ void afficherSousMenuDesOptionsDeAjoute(){
         }
     }
 }
-
 void ajouteDesTaches(int n){
     char titre[MAX_TITRE];
     char description[MAX_DESCRIPTION];
@@ -250,59 +243,6 @@ void ajouteDesTaches(int n){
     }
 }
 
-void afficherTousLesTaches(Tache triTaches[], int croissante, int statut){
-    puts("Les Taches: \n");
-
-    // Afficher les colonnes
-    printf("\t+-----+--------------------------------+--------------------------------+------------+------------+\n");
-    printf("\t| %-3s | %-30s | %-30s | %-10s | %-10s |\n", "ID", "Titre", "Description", "Statu", "DeadLine");
-    printf("\t+-----+--------------------------------+--------------------------------+------------+------------+\n");
-    
-
-    int count = 0;
-    if (statut == 0 || statut == 1)
-    {
-        for (int i = 0; i < tachesLen; i++)
-        {
-            if (triTaches[i].statut == statut)
-            {
-                count++;
-                printf("\t| %-3d | %-30s | %-30s | %-10s | %-2d/%-2d/%-4d |\n",
-                triTaches[i].id, triTaches[i].titre, triTaches[i].description, triTaches[i].statut ? "finalisee" : "a realiser",
-                triTaches[i].deadline.jour, triTaches[i].deadline.mois, triTaches[i].deadline.annee 
-            );
-            printf("\t+-----+--------------------------------+--------------------------------+------------+------------+\n");
-            }
-        }
-    }
-
-    if (count > 0)
-    {
-        return;
-    }
-    
-
-    if (tachesLen == 0 || (count == 0 && statut != -1))
-    {
-        printf("\t|                             ");
-        printf("%-40s", "N'existe pas des taches pour afficher.");
-        printf("                            |\n");
-        printf("\t+-----+--------------------------------+--------------------------------+------------+------------+\n");
-        return;
-    }
-
-    // Afficher les lignes
-    for (int i = 0; i < tachesLen; i++)
-    {
-        int indice = croissante ? i : tachesLen - 1 - i;
-        printf("\t| %-3d | %-30s | %-30s | %-10s | %-2d/%-2d/%-4d |\n",
-            triTaches[indice].id, triTaches[indice].titre, triTaches[indice].description, triTaches[indice].statut ? "finalisée" : "a realiser",
-            triTaches[indice].deadline.jour, triTaches[indice].deadline.mois, triTaches[indice].deadline.annee 
-        );
-        printf("\t+-----+--------------------------------+--------------------------------+------------+------------+\n");
-    }
-}
-
 void afficherSousMenuDeAffichageDesTaches() {
     int choix;
 
@@ -356,7 +296,58 @@ void afficherSousMenuDeAffichageDesTaches() {
         }
     }
 }
+void afficherTousLesTaches(Tache triTaches[], int croissante, int statut){
+    puts("Les Taches: \n");
 
+    // Afficher les colonnes
+    printf("\t+-----+--------------------------------+--------------------------------+------------+------------+\n");
+    printf("\t| %-3s | %-30s | %-30s | %-10s | %-10s |\n", "ID", "Titre", "Description", "Statu", "DeadLine");
+    printf("\t+-----+--------------------------------+--------------------------------+------------+------------+\n");
+    
+
+    int count = 0;
+    if (statut == 0 || statut == 1)
+    {
+        for (int i = 0; i < tachesLen; i++)
+        {
+            if (triTaches[i].statut == statut)
+            {
+                count++;
+                printf("\t| %-3d | %-30s | %-30s | %-10s | %-2d/%-2d/%-4d |\n",
+                triTaches[i].id, triTaches[i].titre, triTaches[i].description, triTaches[i].statut ? "finalisee" : "a realiser",
+                triTaches[i].deadline.jour, triTaches[i].deadline.mois, triTaches[i].deadline.annee 
+            );
+            printf("\t+-----+--------------------------------+--------------------------------+------------+------------+\n");
+            }
+        }
+    }
+
+    if (count > 0)
+    {
+        return;
+    }
+    
+
+    if (tachesLen == 0 || (count == 0 && statut != -1))
+    {
+        printf("\t|                             ");
+        printf("%-40s", "N'existe pas des taches pour afficher.");
+        printf("                            |\n");
+        printf("\t+-----+--------------------------------+--------------------------------+------------+------------+\n");
+        return;
+    }
+
+    // Afficher les lignes
+    for (int i = 0; i < tachesLen; i++)
+    {
+        int indice = croissante ? i : tachesLen - 1 - i;
+        printf("\t| %-3d | %-30s | %-30s | %-10s | %-2d/%-2d/%-4d |\n",
+            triTaches[indice].id, triTaches[indice].titre, triTaches[indice].description, triTaches[indice].statut ? "finalisee" : "a realiser",
+            triTaches[indice].deadline.jour, triTaches[indice].deadline.mois, triTaches[indice].deadline.annee 
+        );
+        printf("\t+-----+--------------------------------+--------------------------------+------------+------------+\n");
+    }
+}
 void triEtAfficherLesTachesParTitre(int croissante){
     Tache *cpy = (Tache*) malloc(tachesLen * sizeof(Tache));
     memcpy(cpy, taches, tachesLen * sizeof(Tache));
@@ -379,7 +370,47 @@ void triEtAfficherLesTachesParTitre(int croissante){
     free(cpy);
 }
 
+void afficherSousMenuDeManipulation(){
+    int choix;
 
+    while (1) {
+        
+        puts("\n\t1. Marker Un Tache Comme Completer");
+        puts("\t2. Modifier Un Tache");
+        puts("\t3. Supprimer Un Tache");
+        puts("\t4. Retour au menu principal");
+        
+        printf("\nEntrer votre choix: ");
+        scanf("%d", &choix);
+        while (getchar() != '\n');
+
+        switch (choix) {
+            case 1:
+                markerUnTacheCommeCompleter();
+                break;
+            case 2:
+                modifierUnTache();
+                break;
+            case 3:
+                supprimerUnTache();
+                break;
+            case 4:
+                return; // Retourne au menu principal
+            default:
+                puts("Choix invalid.");
+        }
+
+        // Retour au menu principal
+        choix = 0;
+        while (choix != 1) {
+            puts("\n###############");
+            puts("1. Retour");
+            printf("Entrez votre choix: ");
+            scanf("%d", &choix);
+            while (getchar() != '\n');
+        }
+    }
+}
 void modifierUnTache(){
     char titre[MAX_TITRE];
 
@@ -438,9 +469,8 @@ void modifierUnTache(){
     strcpy(taches[indice].description, nouvelleDescription);
     taches[indice].deadline = deadline;
     
-    puts("Le tache est modifie avec succes.");
+    puts("\nLe tache est modifie avec succes.");
 }
-
 void markerUnTacheCommeCompleter(){
     char titre[MAX_TITRE];
 
@@ -469,7 +499,6 @@ void markerUnTacheCommeCompleter(){
     
     puts("\nLe tache est Marker avec succes.");
 }
-
 void supprimerUnTache(){
     char titre[MAX_TITRE];
     puts("Supprimer Un Tache: \n");
@@ -689,6 +718,7 @@ void chargerLesTaches() {
         fscanf(file, "%d", &deadline.annee);
         fgetc(file);
 
+        taches[i].id = id;
         strcpy(taches[i].titre, titre);
         strcpy(taches[i].description, description);
         taches[i].statut = statut;
