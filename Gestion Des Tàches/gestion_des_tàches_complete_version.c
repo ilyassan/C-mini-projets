@@ -455,7 +455,7 @@ void modifierUnTache(){
 
     indice = rechercheParTitre(nouvelleTitre);
 
-    if (indice == -1)
+    if (indice != -1)
     {
         puts("\nCette titre est deja existe.");
         return;
