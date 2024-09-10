@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <signal.h>
 #include <time.h>
 
 
@@ -52,7 +51,7 @@ void afficherSousMenuDeRecherche();
 void afficherUnTacheParId();
 void afficherUnTacheParTitre();
 
-void afficherLesOptionDesStatistiques();
+void afficherSousMenuDesStatistiques();
 void afficherLesTachesParStatut(Tache triTaches[], int statut);
 
 void printLesColonnes();
@@ -106,7 +105,7 @@ int main(){
             afficherSousMenuDeRecherche();
             continue;
         case 5:
-            afficherLesOptionDesStatistiques();
+            afficherSousMenuDesStatistiques();
             continue;;
         case 6:
             travail = 0;
@@ -633,7 +632,7 @@ void afficherUnTacheParTitre(){
 }
 
 // --------- Les Fonction De Statistiques ---------
-void afficherLesOptionDesStatistiques(){
+void afficherSousMenuDesStatistiques(){
     int choix;
 
     while (1) {
