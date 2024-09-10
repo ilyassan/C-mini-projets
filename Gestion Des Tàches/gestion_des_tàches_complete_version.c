@@ -56,10 +56,12 @@ void afficherLesOptionDesStatistiques();
 void afficherLesTachesParStatut(Tache triTaches[], int statut);
 
 void printLesColonnes();
+void printUnTacheLigne(Tache tache);
 void printUnTache(Tache tache);
 void printNexistePas();
 
 void scanString(char string[], int size);
+int rechercheParTitre(char titre[MAX_TITRE]);
 long long int obtenirTimestamp(Deadline deadline);
 int differenceDesJours(Deadline deadline, time_t currentTime);
 
@@ -316,7 +318,7 @@ void afficherTousLesTaches(Tache triTaches[], int croissante){
     for (int i = 0; i < tachesLen; i++)
     {
         int indice = croissante ? i : tachesLen - 1 - i;
-        printUnTache(triTaches[indice]);
+        printUnTacheLigne(triTaches[indice]);
     }
 }
 void triEtAfficherLesTachesParTitre(int croissante){
@@ -377,7 +379,7 @@ void afficherLesTachesUrgent(){
 
         if (diff_jours <= tachesAvecDeadlineInferieureA && diff_jours >= 0) {
             count++;
-            printUnTache(taches[i]);
+            printUnTacheLigne(taches[i]);
         }
     }
 
@@ -437,22 +439,13 @@ void modifierUnTache(){
     printf("\tEntrer le titre de tache: ");
     scanString(titre, sizeof(titre));
 
-    int indice = -1;
-    for (int i = 0; i < tachesLen; i++)
-    {
-        if (strcmp(titre, taches[i].titre) == 0)
-        {
-            indice = i;
-            break;
-        }
-    }
+    int indice = rechercheParTitre(titre);
 
     if (indice == -1)
     {
         puts("\nCette tache n'existe pas.");
         return;
     }
-    
     
     char nouvelleTitre[MAX_TITRE];
     char nouvelleDescription[MAX_DESCRIPTION];
@@ -461,13 +454,12 @@ void modifierUnTache(){
     printf("\tEntrer la nouvelle titre de tache: ");
     scanString(nouvelleTitre, sizeof(nouvelleTitre));
 
-    for (int i = 0; i < tachesLen; i++)
+    indice = rechercheParTitre(nouvelleTitre);
+
+    if (indice == -1)
     {
-        if (strcmp(nouvelleTitre, taches[i].titre) == 0)
-        {
-            puts("\nCette titre est deja existe.");
-            return;
-        }
+        puts("\nCette titre est deja existe.");
+        return;
     }
     
     printf("\tEntrer la nouvelle description de tache: ");
@@ -497,15 +489,7 @@ void markerUnTacheCommeCompleter(){
     printf("\tEntrer le titre de tache: ");
     scanString(titre, sizeof(titre));
 
-    int indice = -1;
-    for (int i = 0; i < tachesLen; i++)
-    {
-        if (strcmp(titre, taches[i].titre) == 0)
-        {
-            indice = i;
-            break;
-        }
-    }
+    int indice = rechercheParTitre(titre);
 
     if (indice == -1)
     {
@@ -526,15 +510,7 @@ void supprimerUnTache(){
     printf("\tEntrer le titre de Tache: ");
     scanString(titre, sizeof(titre));
 
-    int indice = -1;
-    for (int i = 0; i < tachesLen; i++)
-    {
-        if (strcmp(titre, taches[i].titre) == 0)
-        {
-            indice = i;
-            break;
-        }
-    }
+    int indice = rechercheParTitre(titre);
 
     if (indice == -1)
     {
@@ -604,56 +580,56 @@ void afficherSousMenuDeRecherche(){
 void afficherUnTacheParId(){
     int id;
 
-    puts("Afficher Un Tache: ");
+    puts("Afficher Un Tache:\n");
 
     printf("\tEntrer le ID de tache: ");
     scanf("%d", &id);
 
-    for (int i = 0; i < tachesLen; i++)
-    {
-        if (taches[i].id == id)
-        {
-            Tache tache = taches[i];
+    printf("\n");
 
-            printf("\tLe ID: %d\n", tache.id);
-            printf("\tLe Titre: %s\n", tache.titre);
-            printf("\tLe Description: %s\n", tache.description);
-            printf("\tLa Statut: %s\n",  tache.statut ? "finalisée" : "a realiser");
+    int g = 0;
+    int d = tachesLen - 1;
 
-            Deadline deadline = tache.deadline;
-            printf("\tLa Deadline: %02d/%02d/%4d\n",  deadline.jour, deadline.mois, deadline.annee);
+    // Recherche Binaire
+    while (g <= d) {
+        int mid = (d + g) / 2;
+
+        if (taches[mid].id == id) {
+            Tache tache = taches[mid];
+
+            printUnTache(tache);
+
             return;
+        }
+        else if (id > taches[mid].id) {
+            g = mid + 1;
+        } else {
+            d = mid - 1;
         }
     }
 
-    puts("N'existe pas un tache avec cette ID.");
+    puts("N'existe pas une tache avec cet ID.");
 }
 void afficherUnTacheParTitre(){
     char titre[MAX_TITRE];
 
-    puts("Afficher Un Tache: ");
+    puts("Afficher Un Tache:\n");
 
     printf("\tEntrer le titre de tache: ");
     scanString(titre, sizeof(titre));
 
-    for (int i = 0; i < tachesLen; i++)
+    printf("\n");
+
+    int indice = rechercheParTitre(titre);
+    if (indice == -1)
     {
-        if (strcmp(taches[i].titre, titre) == 0)
-        {
-            Tache tache = taches[i];
-
-            printf("\tLe ID: %d\n", tache.id);
-            printf("\tLe Titre: %s\n", tache.titre);
-            printf("\tLe Description: %s\n", tache.description);
-            printf("\tLa Statut: %s\n",  tache.statut ? "finalisée" : "a realiser");
-
-            Deadline deadline = tache.deadline;
-            printf("\tLa Deadline: %02d/%02d/%4d\n",  deadline.jour, deadline.mois, deadline.annee);
-            return;
-        }
+        puts("N'existe pas un tache avec cette titre.");
+        return;
     }
 
-    puts("N'existe pas un tache avec cette titre.");
+    Tache tache = taches[indice];
+
+    printUnTache(tache);
 }
 
 // --------- Les Fonction De Statistiques ---------
@@ -707,7 +683,7 @@ void afficherLesTachesParStatut(Tache triTaches[], int statut){
         if (triTaches[i].statut == statut)
         {
             count++;
-            printUnTache(triTaches[i]);
+            printUnTacheLigne(triTaches[i]);
         }
     }
 
@@ -729,21 +705,42 @@ void scanString(char string[], int size){
 
 void printLesColonnes(){
     printf("\t+-----+--------------------------------+--------------------------------+------------+------------+\n");
-    printf("\t| %-3s | %-30s | %-30s | %-10s | %-10s |\n", "ID", "Titre", "Description", "Statu", "DeadLine");
+    printf("\t| %-3s | %-30s | %-30s | %-10s | %-10s |\n", "ID", "Titre", "Description", "Statut", "DeadLine");
     printf("\t+-----+--------------------------------+--------------------------------+------------+------------+\n");
 }
-void printUnTache(Tache tache){
+void printUnTacheLigne(Tache tache){
     printf("\t| %-3d | %-30s | %-30s | %-10s | %02d/%02d/%4d |\n",
         tache.id, tache.titre, tache.description, tache.statut ? "Finalisee" : "A realiser",
         tache.deadline.jour, tache.deadline.mois, tache.deadline.annee 
     );
     printf("\t+-----+--------------------------------+--------------------------------+------------+------------+\n");
 }  
+void printUnTache(Tache tache){
+    printf("\tLe ID: %d\n", tache.id);
+    printf("\tLe Titre: %s\n", tache.titre);
+    printf("\tLe Description: %s\n", tache.description);
+    printf("\tLa Statut: %s\n", tache.statut ? "Finalisee" : "A realiser");
+
+    Deadline deadline = tache.deadline;
+    printf("\tLa Deadline: %02d/%02d/%4d\n", deadline.jour, deadline.mois, deadline.annee);
+}
 void printNexistePas(){
     printf("\t|                             ");
     printf("%-40s", "N'existe pas des taches pour afficher.");
     printf("                            |\n");
     printf("\t+-----+--------------------------------+--------------------------------+------------+------------+\n");
+}
+
+int rechercheParTitre(char titre[MAX_TITRE]){
+    for (int i = 0; i < tachesLen; i++)
+    {
+        if (strcmp(titre, taches[i].titre) == 0)
+        {
+            return i;
+        }
+    }
+
+    return -1;
 }
 
 long long int obtenirTimestamp(Deadline deadline){
