@@ -453,9 +453,9 @@ void modifierUnTache(){
     printf("\tEntrer la nouvelle titre de tache: ");
     scanString(nouvelleTitre, sizeof(nouvelleTitre));
 
-    indice = rechercheParTitre(nouvelleTitre);
+    int trouver = rechercheParTitre(nouvelleTitre);
 
-    if (indice != -1)
+    if (trouver != -1)
     {
         puts("\nCette titre est deja existe.");
         return;
@@ -473,10 +473,16 @@ void modifierUnTache(){
 
     printf("\tEntrer le jour de deadline: ");
     scanf("%d", &deadline.jour);
+    while (getchar() != '\n');
 
-    strcpy(taches[indice].titre, nouvelleTitre);
-    strcpy(taches[indice].description, nouvelleDescription);
-    taches[indice].deadline = deadline;
+    Tache tache;
+
+    strcpy(tache.titre, nouvelleTitre);
+    strcpy(tache.description, nouvelleDescription);
+    tache.deadline = taches[indice].deadline;
+    tache.deadline.timestamp = obtenirTimestamp(deadline);
+
+    taches[indice] = tache;
     
     puts("\nLe tache est modifie avec succes.");
 }
