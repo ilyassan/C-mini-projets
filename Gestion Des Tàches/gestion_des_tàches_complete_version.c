@@ -27,7 +27,7 @@ typedef struct
 } Tache;
 
 // Définir les global variables
-Tache *taches = NULL;
+Tache taches[100];
 int tachesLen = 0;
 
 char nomDeFichier[] = "taches.txt";
@@ -41,6 +41,7 @@ void afficherSousMenuDeAffichageDesTaches();
 void afficherTousLesTaches(Tache triTaches[], int croissante);
 void triEtAfficherLesTachesParTitre(int croissante);
 void triEtAfficherLesTachesParDeadline(int croissante);
+void afficherLesTachesUrgent();
 
 void afficherSousMenuDeManipulation();
 void modifierUnTache();
@@ -53,8 +54,6 @@ void afficherUnTacheParTitre();
 
 void afficherLesOptionDesStatistiques();
 void afficherLesTachesParStatut(Tache triTaches[], int statut);
-void afficherLesTachesUrgent();
-
 
 void printLesColonnes();
 void printUnTache(Tache tache);
@@ -230,15 +229,6 @@ void ajouteDesTaches(int n){
 
         printf("\n");
 
-        Tache *temp = (Tache*) realloc(taches, (tachesLen + 1) * sizeof(Tache));
-        if (temp == NULL)
-        {
-            puts("Erreur lors de l'ajout d'un Tache.");
-            return;
-        }
-        // Allocation Succéss
-        taches = temp;
-
         taches[tachesLen].id = tachesLen + 1;
         strcpy(taches[tachesLen].titre, titre);
         strcpy(taches[tachesLen].description, description);
@@ -330,7 +320,7 @@ void afficherTousLesTaches(Tache triTaches[], int croissante){
     }
 }
 void triEtAfficherLesTachesParTitre(int croissante){
-    Tache *cpy = (Tache*) malloc(tachesLen * sizeof(Tache));
+    Tache cpy[100];
     memcpy(cpy, taches, tachesLen * sizeof(Tache));
 
     // Tri á bulles
@@ -348,10 +338,9 @@ void triEtAfficherLesTachesParTitre(int croissante){
     }
 
     afficherTousLesTaches(cpy, croissante);
-    free(cpy);
 }
 void triEtAfficherLesTachesParDeadline(int croissante){
-    Tache *cpy = (Tache*) malloc(tachesLen * sizeof(Tache));
+    Tache cpy[100];
     memcpy(cpy, taches, tachesLen * sizeof(Tache));
 
     // Tri á bulles
@@ -369,7 +358,6 @@ void triEtAfficherLesTachesParDeadline(int croissante){
     }
 
     afficherTousLesTaches(cpy, croissante);
-    free(cpy);
 }
 void afficherLesTachesUrgent(){
     puts("Les Taches: \n");
@@ -531,12 +519,12 @@ void markerUnTacheCommeCompleter(){
 }
 void supprimerUnTache(){
     char titre[MAX_TITRE];
+    char confirmation[4];
+
     puts("Supprimer Un Tache: \n");
 
     printf("\tEntrer le titre de Tache: ");
     scanString(titre, sizeof(titre));
-
-    printf("\n");
 
     int indice = -1;
     for (int i = 0; i < tachesLen; i++)
@@ -554,6 +542,15 @@ void supprimerUnTache(){
         return;
     }
     
+    printf("\tVoulez-vous vraiment supprimer cette tache ? (oui/non): ");
+    scanString(confirmation, sizeof(confirmation));
+
+    printf("\n");
+
+    if (strcmp(confirmation, "oui") != 0) {
+        puts("Suppression annulée.");
+        return;
+    }
 
     for (int i = indice; i < tachesLen - 1; i++)
     {
@@ -561,22 +558,6 @@ void supprimerUnTache(){
     }
 
     tachesLen--;
-
-    if (tachesLen == 0)
-    {
-        taches = NULL;
-        return;
-    }
-
-    Tache *temp = (Tache*) realloc(taches, tachesLen * sizeof(Tache));
-    if (temp == NULL)
-    {
-        puts("Probleme lors de supprimer le tache.");
-        return;
-    }
-
-    // Allocation Succéss
-    taches = temp;
 
     puts("Tache supprime avec succes.");
 }
@@ -640,7 +621,7 @@ void afficherUnTacheParId(){
             printf("\tLa Statut: %s\n",  tache.statut ? "finalisée" : "a realiser");
 
             Deadline deadline = tache.deadline;
-            printf("\tLa Deadline: %-2d/%-2d/%-4d\n",  deadline.jour, deadline.mois, deadline.annee);
+            printf("\tLa Deadline: %02d/%02d/%4d\n",  deadline.jour, deadline.mois, deadline.annee);
             return;
         }
     }
@@ -667,7 +648,7 @@ void afficherUnTacheParTitre(){
             printf("\tLa Statut: %s\n",  tache.statut ? "finalisée" : "a realiser");
 
             Deadline deadline = tache.deadline;
-            printf("\tLa Deadline: %-2d/%-2d/%-4d\n",  deadline.jour, deadline.mois, deadline.annee);
+            printf("\tLa Deadline: %02d/%02d/%4d\n",  deadline.jour, deadline.mois, deadline.annee);
             return;
         }
     }
@@ -752,7 +733,7 @@ void printLesColonnes(){
     printf("\t+-----+--------------------------------+--------------------------------+------------+------------+\n");
 }
 void printUnTache(Tache tache){
-    printf("\t| %-3d | %-30s | %-30s | %-10s | %02d/%02d/%04d |\n",
+    printf("\t| %-3d | %-30s | %-30s | %-10s | %02d/%02d/%4d |\n",
         tache.id, tache.titre, tache.description, tache.statut ? "Finalisee" : "A realiser",
         tache.deadline.jour, tache.deadline.mois, tache.deadline.annee 
     );
@@ -822,13 +803,6 @@ void chargerLesTaches() {
 
     fscanf(file, "%d", &tachesLen);
     fgetc(file);
-
-    taches = (Tache*)malloc(tachesLen * sizeof(Tache));
-    if (taches == NULL) {
-        fclose(file);
-        return;
-    }
-    
     
     for (int i = 0; i < tachesLen; i++) {
         char titre[MAX_TITRE];
