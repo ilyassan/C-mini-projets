@@ -212,7 +212,6 @@ void ajouteDesTaches(int n){
                 puts("\nCette titre est deja existe.");
                 return;
             }
-            
         }
         
         printf("\tEntrer la description de tache: ");
@@ -529,7 +528,7 @@ void supprimerUnTache(){
     printf("\n");
 
     if (strcmp(confirmation, "oui") != 0) {
-        puts("Suppression annulée.");
+        puts("Suppression annulee.");
         return;
     }
 
